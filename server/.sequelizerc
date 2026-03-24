@@ -1,0 +1,8 @@
+import { resolve } from 'path';
+
+export default {
+	'config': resolve('config', 'config.cjs'),
+	'models-path': resolve('api'),
+	'seeders-path': resolve('core', 'seeders'),
+	'migrations-path': resolve('core', 'migrations')
+};

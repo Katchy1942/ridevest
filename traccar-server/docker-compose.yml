@@ -1,0 +1,13 @@
+services:
+  traccar:
+    image: traccar/traccar:latest
+    container_name: traccar-server
+    restart: unless-stopped
+    ports:
+      - "8082:8082" # Web UI and REST/WebSocket API
+      - "5055:5055/tcp" # Port for Traccar Client app (Android/iOS)
+      - "5055:5055/udp"
+    volumes:
+      - ./traccar.xml:/opt/traccar/conf/traccar.xml:ro # Mount your config
+      - ./logs:/opt/traccar/logs:rw # Persist logs
+      - ./data:/opt/traccar/data:rw # Persist the H2 database

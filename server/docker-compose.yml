@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgis/postgis:15-3.4-alpine
+    container_name: ridevest-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-ridevest}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: ridevest-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  api:
+    build: .
+    container_name: ridevest-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-ridevest}
+      - REDIS_URL=redis://redis:6379
+      - TRACCAR_URL=http://host.docker.internal:8082
+      - PORT=3000
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  pgdata:
+  redisdata:

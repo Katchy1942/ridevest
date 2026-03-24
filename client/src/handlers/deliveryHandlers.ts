@@ -1,0 +1,158 @@
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import api from '@/lib/axios';
+import { toast } from 'sonner';
+import { fetchSuggestions } from '@/lib/googlemaps';
+import { initiateInterswitchPayment } from '@/lib/interswitch';
+
+export const useDeliveryHandlers = () => {
+   const [searchParams, setSearchParams] = useSearchParams();
+   const [selectedState, setSelectedState] = useState('');
+   const [companies, setCompanies] = useState<any[]>([]);
+   const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
+   const [isBrandDelivery, setIsBrandDelivery] = useState(false);
+   const [transportMode, setTransportMode] = useState('bike');
+
+   const [formData, setFormData] = useState({
+      courier: '',
+      pickup: '',
+      destination: '',
+      receiverName: '',
+      receiverPhone: '',
+      senderName: '',
+      senderPhone: '',
+      weightEstimate: '',
+      deliveryNotes: '',
+      businessName: ''
+   });
+
+   const [suggestions, setSuggestions] = useState<any>({ pickup: [], destination: [] });
+   const [showSuggestions, setShowSuggestions] = useState<any>({ pickup: false, destination: false });
+   const [addressLoader, setAddressLoader] = useState<any>({ pickup: false, destination: false });
+   const [selectedPlaceIds, setSelectedPlaceIds] = useState<any>({ pickup: null, destination: null });
+
+   const selectedCompany = companies.find(c => c.companyName === formData.courier);
+
+   useEffect(() => {
+      if (selectedCompany && !selectedCompany.supportedModes.includes(transportMode)) {
+         setTransportMode(selectedCompany.supportedModes[0] || '');
+      }
+   }, [formData.courier, selectedCompany, transportMode]);
+
+   useEffect(() => {
+      const companyParam = searchParams.get('company');
+      if (companyParam) {
+         setFormData(prev => ({ ...prev, courier: companyParam }));
+      }
+   }, [searchParams]);
+
+   const handleRegionContinue = async (state: string) => {
+      setIsLoadingCompanies(true);
+      try {
+         const response = await api.get(`/deliveries/serving-state/${state}`);
+         const foundCompanies = response.data.companies;
+
+         if (!foundCompanies || foundCompanies.length === 0) {
+            return toast.info("No logistics providers found for this state yet.");
+         }
+
+         setCompanies(foundCompanies);
+         setSelectedState(state);
+      } catch (error) {
+         console.error("Error fetching companies:", error);
+         toast.error("Failed to load available logistics providers");
+      } finally {
+         setIsLoadingCompanies(false);
+      }
+   };
+
+   const resetStateSelection = () => {
+      setSelectedState('');
+      setCompanies([]);
+      setFormData(prev => ({ ...prev, courier: '' }));
+      setSearchParams({}); // Clear URL params
+   };
+
+   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+   };
+
+   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+
+      if (!value.trim()) {
+         setSuggestions((prev: any) => ({ ...prev, [name]: [] }));
+         setShowSuggestions((prev: any) => ({ ...prev, [name]: false }));
+         setAddressLoader((prev: any) => ({ ...prev, [name]: false }));
+         setSelectedPlaceIds((prev: any) => ({ ...prev, [name]: null }));
+         return;
+      }
+
+      setSelectedPlaceIds((prev: any) => ({ ...prev, [name]: null }));
+      setAddressLoader((prev: any) => ({ ...prev, [name]: true }));
+
+      fetchSuggestions(value).then(results => {
+         setSuggestions((prev: any) => ({ ...prev, [name]: results }));
+         setShowSuggestions((prev: any) => ({ ...prev, [name]: results.length > 0 }));
+      }).finally(() => {
+         setAddressLoader((prev: any) => ({ ...prev, [name]: false }));
+      });
+   };
+
+   const handleSelectSuggestion = (text: string, field: 'pickup' | 'destination', placeId: string) => {
+      setFormData(prev => ({ ...prev, [field]: text }));
+      setSelectedPlaceIds((prev: any) => ({ ...prev, [field]: placeId }));
+      setShowSuggestions((prev: any) => ({ ...prev, [field]: false }));
+   };
+
+   const handlePayment = () => {
+      const price = selectedCompany?.averageDeliveryPrice || 0;
+      const amountInKobo = (price * 100).toString();
+
+      initiateInterswitchPayment({
+         amount: amountInKobo,
+         customerEmail: "test@ridevest.com",
+         customerName: formData.senderName || "Test User",
+         customerId: "user_001",
+         onComplete: (response: any) => {
+            console.log("Payment Response:", response);
+            if (response.resp === "00") {
+               alert("Delivery Created Successfully!");
+            }
+         }
+      });
+   };
+
+   const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      handlePayment();
+   };
+
+   return {
+      selectedState,
+      setSelectedState,
+      companies,
+      isLoadingCompanies,
+      isBrandDelivery,
+      setIsBrandDelivery,
+      transportMode,
+      setTransportMode,
+      formData,
+      setFormData,
+      suggestions,
+      showSuggestions,
+      addressLoader,
+      selectedPlaceIds,
+      selectedCompany,
+      handleRegionContinue,
+      resetStateSelection,
+      handleInputChange,
+      handleAddressChange,
+      handleSelectSuggestion,
+      handlePayment,
+      handleSubmit,
+      searchParams
+   };
+};
