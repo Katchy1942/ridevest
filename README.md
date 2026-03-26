@@ -72,11 +72,39 @@ methods.
    - Funds are only released after successful delivery confirmation
 
 6. **Payout**
+
    - Once delivery is verified, funds are released to the logistics company
 
-  ## Tech Stack
+## Tech Stack
+
    - **Frontend:** React.ts
    - **Backend:** Node.js *(Express)*
    - **Database:** PostgreSQL *(PostGIS)*
-   - **Realtime:** WebSockets *(Traccar)*
+   - **Realtime:** WebSockets
+   - **GPS:** Traccar, Google Places/Maps
    - **Payments:** Interswitch
+
+## Challenges
+
+1. Designing for unreliable addressing systems in Nigeria
+2. Handling inconsistent user availability during deliveries
+3. Handling unreliable network conditions during tracking
+
+## What We Learned
+
+1. Real-time systems require strong fallback mechanisms
+2. UX plays a huge role in delivery success
+3. Trust and verification are bigger problems than visibility
+
+## Future Improvements
+
+1. Offline-first tracking for low connectivity areas
+2. Optimize delivery routes using historical tracking data
+
+## Impact
+
+1. Ridevest reduces delivery uncertainty and helps businesses:
+     - Lower failed delivery rates
+     - Improve customer trust
+
+> Delivery shouldn't fail this often. Ridevest is building a system where it doesn't.
