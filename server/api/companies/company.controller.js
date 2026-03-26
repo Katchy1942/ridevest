@@ -1,4 +1,5 @@
 import models from '../../core/models.index.js';
+import { traccarCreateUser } from '../../core/traccar.service.js';
 
 export const registerCompany = async (req, res) => {
 	try {
@@ -36,6 +37,15 @@ export const registerCompany = async (req, res) => {
 			return res.status(409).json({ error: 'Email is already taken by another company' });
 		}
 
+      // 1. Create Traccar User
+      let traccarId = null;
+      try {
+         const tUser = await traccarCreateUser(companyName, email, password);
+         traccarId = tUser.id;
+      } catch (error) {
+         console.warn("Traccar User Creation skipped or failed:", error.message);
+      }
+
 		const newCompany = await models.Company.create({
 			companyName,
 			whatsappNumber,
@@ -50,7 +60,8 @@ export const registerCompany = async (req, res) => {
 			logoPath,
 			averageDeliveryPrice,
 			password, 
-			confirmPassword
+			confirmPassword,
+         traccarId
 		});
 
 		const companyData = newCompany.toJSON();
@@ -61,6 +72,7 @@ export const registerCompany = async (req, res) => {
 			message: 'Company registered successfully',
 			company: companyData
 		});
+
 		
 	} catch (error) {
 		console.error("Company Registration Error:", error);

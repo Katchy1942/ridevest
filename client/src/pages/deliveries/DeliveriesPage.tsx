@@ -1,66 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, MoreHorizontal, Eye, Edit2, XCircle, ChevronRight } from 'lucide-react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Calendar02Icon } from '@hugeicons/core-free-icons';
-
-const mockDeliveries = [
-  {
-    id: 'TRK-10928',
-    recipient: 'Acme Corp',
-    destination: '123 Business Rd, New York, NY',
-    status: 'In Transit',
-    date: 'Oct 24, 2026',
-    driver: 'Michael Scott',
-  },
-  {
-    id: 'TRK-10929',
-    recipient: 'Jane Doe',
-    destination: '456 Elm St, San Francisco, CA',
-    status: 'Delivered',
-    date: 'Oct 23, 2026',
-    driver: 'Dwight Schrute',
-  },
-  {
-    id: 'TRK-10930',
-    recipient: 'Bob Smith',
-    destination: '789 Oak Ave, Austin, TX',
-    status: 'Pending',
-    date: 'Oct 25, 2026',
-    driver: 'Unassigned',
-  },
-  {
-    id: 'TRK-10931',
-    recipient: 'Global Tech',
-    destination: '321 Tech Blvd, Seattle, WA',
-    status: 'In Transit',
-    date: 'Oct 25, 2026',
-    driver: 'Jim Halpert',
-  },
-  {
-    id: 'TRK-10932',
-    recipient: 'Sarah Jenkins',
-    destination: '55 Pine St, Portland, OR',
-    status: 'Cancelled',
-    date: 'Oct 22, 2026',
-    driver: 'Ryan Howard',
-  },
-];
+import api from '@/lib/axios';
 
 const statusStyles = {
   'In Transit': 'bg-blue-900/30 text-blue-400',
   'Delivered': 'bg-emerald-900/30 text-emerald-400',
   'Pending': 'bg-amber-900/30 text-amber-400',
   'Cancelled': 'bg-red-900/30 text-red-400',
+  'unassigned': 'bg-zinc-800 text-zinc-400',
 };
+
+const formatStatus = (status: string) => {
+	if (status === 'unassigned') return 'Unassigned';
+	return status;
+}
 
 const DeliveriesPage = () => {
 	const [search, setSearch] = useState('');
+	const [deliveries, setDeliveries] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
 
-	const filteredDeliveries = mockDeliveries.filter(d => 
-		d.recipient.toLowerCase().includes(search.toLowerCase()) || 
-		d.id.toLowerCase().includes(search.toLowerCase()) ||
-		d.status.toLowerCase().includes(search.toLowerCase()) ||
-		d.driver.toLowerCase().includes(search.toLowerCase())
+	useEffect(() => {
+		const fetchDeliveries = async () => {
+			try {
+				const response = await api.get('/deliveries/all');
+				setDeliveries(response.data);
+			} catch (error) {
+				console.error('Error fetching deliveries:', error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchDeliveries();
+	}, []);
+
+	const filteredDeliveries = deliveries.filter(d => 
+		(d.receiverName?.toLowerCase() || '').includes(search.toLowerCase()) || 
+		(d.trackingId?.toLowerCase() || '').includes(search.toLowerCase()) ||
+		(d.status?.toLowerCase() || '').includes(search.toLowerCase()) ||
+		(d.rider ? `${d.rider.firstName} ${d.rider.lastName}` : '').toLowerCase().includes(search.toLowerCase())
 	);
   
 	return (
@@ -102,34 +83,40 @@ const DeliveriesPage = () => {
 							</tr>
 						</thead>
 						<tbody className="divide-y divide-zinc-800 text-zinc-100">
-							{filteredDeliveries.length > 0 ? filteredDeliveries.map((delivery) => (
+							{loading ? (
+								<tr>
+									<td colSpan={6} className="px-6 py-8 text-center text-zinc-500">
+										Loading deliveries...
+									</td>
+								</tr>
+							) : filteredDeliveries.length > 0 ? filteredDeliveries.map((delivery) => (
 								<tr key={delivery.id} className="hover:bg-zinc-800/90 transition-colors group">
 									<td className="px-6 py-4">
 										<div className="flex items-center gap-2 font-medium text-zinc-100">
-											{delivery.id}
+											{delivery.trackingId}
 										</div>
 									</td>
 									<td className="px-6 py-4">
 										<div className="flex flex-col">
-											<span className="font-medium text-zinc-100">{delivery.recipient}</span>
-											<span className="text-zinc-400 text-xs mt-0.5 line-clamp-1">{delivery.destination}</span>
+											<span className="font-medium text-zinc-100">{delivery.receiverName}</span>
+											<span className="text-zinc-400 text-xs mt-0.5 line-clamp-1">{delivery.dropoffLocation}</span>
 										</div>
 									</td>
 									<td className="px-6 py-4">
-										<span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyles[delivery.status as keyof typeof statusStyles]}`}>
-											{delivery.status}
+										<span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyles[delivery.status as keyof typeof statusStyles] || 'bg-zinc-800 text-zinc-400'}`}>
+											{formatStatus(delivery.status)}
 										</span>
 									</td>
 									<td className="px-6 py-4">
 										<div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-300">
 											<div className='w-4 h-4 bg-zinc-400 rounded-full'></div>
-											{delivery.driver}
+											{delivery.rider ? `${delivery.rider.firstName} ${delivery.rider.lastName}` : 'Unassigned'}
 										</div>
 									</td>
 									<td className="px-6 py-4">
 										<div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
 											<HugeiconsIcon icon={Calendar02Icon} size={20} strokeWidth={1.5} />
-											{delivery.date}
+											{new Date(delivery.createdAt).toLocaleDateString()}
 										</div>
 									</td>
 									<td className="px-6 py-4 text-right">
@@ -168,7 +155,7 @@ const DeliveriesPage = () => {
 							)) : (
 								<tr>
 									<td colSpan={6} className="px-6 py-8 text-center text-zinc-500 dark:text-zinc-400">
-										No deliveries found matching "{search}"
+										No deliveries found
 									</td>
 								</tr>
 							)}
@@ -178,22 +165,26 @@ const DeliveriesPage = () => {
 
 				{/* Mobile Card View */}
 				<div className="flex flex-col gap-6 md:hidden pb-2">
-					{filteredDeliveries.length > 0 ? filteredDeliveries.map((delivery) => (
+					{loading ? (
+						<div className="p-6 text-center text-sm text-zinc-400 bg-zinc-900 border border-zinc-800 rounded-md">
+							Loading deliveries...
+						</div>
+					) : filteredDeliveries.length > 0 ? filteredDeliveries.map((delivery) => (
 						<div key={delivery.id} className="bg-zinc-900 rounded-xl p-4 space-y-6 shadow-xs">
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-2 font-medium text-zinc-100">
-									{delivery.id}
+									{delivery.trackingId}
 								</div>
-								<span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyles[delivery.status as keyof typeof statusStyles]}`}>
-									{delivery.status}
+								<span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyles[delivery.status as keyof typeof statusStyles] || 'bg-zinc-800 text-zinc-400'}`}>
+									{formatStatus(delivery.status)}
 								</span>
 							</div>
 							
 							<div className="space-y-2">
 								<div>
-									<h4 className="text-sm font-medium text-zinc-100">{delivery.recipient}</h4>
+									<h4 className="text-sm font-medium text-zinc-100">{delivery.receiverName}</h4>
 									<div className="text-zinc-400 text-sm mt-1">
-										<span>{delivery.destination}</span>
+										<span>{delivery.dropoffLocation}</span>
 									</div>
 								</div>
 							</div>
@@ -202,11 +193,11 @@ const DeliveriesPage = () => {
 								<div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-400">
 									<div className="flex items-center gap-1.5">
 										<div className='w-4 h-4 bg-zinc-400 rounded-full'></div>
-										<span>{delivery.driver}</span>
+										<span>{delivery.rider ? `${delivery.rider.firstName} ${delivery.rider.lastName}` : 'Unassigned'}</span>
 									</div>
 									<div className="flex items-center gap-1.5">
 										<HugeiconsIcon icon={Calendar02Icon} size={16} strokeWidth={1.5} className="text-zinc-400" />
-										<span>{delivery.date}</span>
+										<span>{new Date(delivery.createdAt).toLocaleDateString()}</span>
 									</div>
 								</div>
 								<div className="relative group/action">
@@ -254,3 +245,4 @@ const DeliveriesPage = () => {
 };
 
 export default DeliveriesPage;
+

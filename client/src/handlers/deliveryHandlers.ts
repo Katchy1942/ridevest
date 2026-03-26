@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 import { fetchSuggestions } from '@/lib/googlemaps';
 import { initiateInterswitchPayment } from '@/lib/interswitch';
 
 export const useDeliveryHandlers = () => {
+   const navigate = useNavigate();
+
+   const [loading, setLoading] = useState(false);
+   const [errorMessage, setErrorMessage] = useState('');
    const [searchParams, setSearchParams] = useSearchParams();
    const [selectedState, setSelectedState] = useState('');
    const [companies, setCompanies] = useState<any[]>([]);
@@ -107,27 +111,59 @@ export const useDeliveryHandlers = () => {
       setShowSuggestions((prev: any) => ({ ...prev, [field]: false }));
    };
 
-   const handlePayment = () => {
-      const price = selectedCompany?.averageDeliveryPrice || 0;
+   const handlePayment = (trackingId: string) => {
+      const price = selectedCompany?.averageDeliveryPrice || 2000;
       const amountInKobo = (price * 100).toString();
 
       initiateInterswitchPayment({
          amount: amountInKobo,
-         customerEmail: "test@ridevest.com",
+         customerEmail: "[EMAIL_ADDRESS]",
          customerName: formData.senderName || "Test User",
          customerId: "user_001",
+         trackingId,
          onComplete: (response: any) => {
             console.log("Payment Response:", response);
             if (response.resp === "00") {
-               alert("Delivery Created Successfully!");
+               navigate(`/payment-response?txnref=${response.txnref}&amount=${amountInKobo}&trackingId=${trackingId}`);
+            } else if (response.resp === "Z6")  {
+               toast.error("Payment cancelled");
+            }  else if (response.resp === "01") {
+               toast.error("Payment failed");
             }
          }
       });
    };
 
-   const handleSubmit = (e: React.FormEvent) => {
+   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      handlePayment();
+      setLoading(true);
+
+      const trackingId = `RV${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+
+      try {
+         const response = await api.post('/deliveries/create', { 
+            ...formData, 
+            transportMode,
+            trackingId,
+            pickupPlaceId: selectedPlaceIds.pickup,
+            destinationPlaceId: selectedPlaceIds.destination
+         });
+
+         if (response.status === 201) {
+            toast.success("Delivery created successfully!");
+            setTimeout(() => {
+               toast.info("Proceeding to payment...");
+               handlePayment(trackingId);
+            }, 1000);
+         }
+      } catch (error: any) {
+         console.error("Error creating delivery:", error);
+         const errorMsg = error.response?.data?.message || "Failed to create delivery";
+         setErrorMessage(errorMsg);
+         toast.error("Failed to create delivery");
+      } finally {
+         setLoading(false);
+      }
    };
 
    return {
@@ -153,6 +189,8 @@ export const useDeliveryHandlers = () => {
       handleSelectSuggestion,
       handlePayment,
       handleSubmit,
-      searchParams
+      searchParams,
+      errorMessage,
+      loading
    };
 };

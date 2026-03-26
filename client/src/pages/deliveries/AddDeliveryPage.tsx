@@ -1,4 +1,4 @@
-import { Bike, ArrowLeft } from 'lucide-react';
+import { Bike, ArrowLeft, Loader2 } from 'lucide-react';
 import {
    Combobox,
    ComboboxInput,
@@ -33,7 +33,9 @@ const AddDeliveryPage = () => {
       handleSelectSuggestion,
       handleSubmit,
       selectedCompany,
-      searchParams
+      searchParams,
+      errorMessage,
+      loading
    } = useDeliveryHandlers();
 
 
@@ -106,7 +108,7 @@ const AddDeliveryPage = () => {
                            <div className="w-2.5 h-2.5 bg-emerald-500 animate-pulse rounded-full relative z-20"></div>
                         </div>
                         <div className="space-y-1.5 relative">
-                           <label className="text-sm font-medium text-zinc-300">Pickup Location</label>
+                           <label className="text-sm font-medium text-zinc-300">Pickup Location (Landmark)</label>
                            <div className="relative">
                               <input 
                                  type="text" 
@@ -146,7 +148,7 @@ const AddDeliveryPage = () => {
                            <div className="w-2.5 h-2.5 bg-red-500 animate-pulse rounded-full relative z-20"></div>
                         </div>
                         <div className="space-y-1.5 relative">
-                           <label className="text-sm font-medium text-zinc-300">Drop-off Destination</label>
+                           <label className="text-sm font-medium text-zinc-300">Drop-off Destination (Landmark)</label>
                            <div className="relative">
                               <input 
                                  type="text" 
@@ -338,14 +340,28 @@ const AddDeliveryPage = () => {
                      </div>
                   )}
                </div>
-               
+
                <div className="flex justify-end pt-4">
-                  <button 
-                     type="submit" 
-                     className="w-full bg-emerald-700 text-base text-zinc-100 font-medium py-2 rounded-md hover:bg-emerald-600 transition-colors shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-zinc-800"
-                  >
-                     Proceed to pay ₦{selectedCompany?.averageDeliveryPrice?.toLocaleString() || '---'}
-                  </button>
+                  <div className="w-full flex flex-col gap-2 justify-between items-center">
+                     <div>
+                        {errorMessage && (
+                           <div className="text-red-500 text-xs text-center">{errorMessage}</div>
+                        )}
+                     </div>
+                     <button  disabled={loading}
+                        type="submit" 
+                        className="w-full bg-emerald-700 text-base flex justify-center items-center text-zinc-100 font-medium py-2 rounded-md hover:bg-emerald-600 transition-colors shadow-sm cursor-pointer"
+                     >
+                        {loading ? (
+                        <>
+                           <Loader2 className="animate-spin mr-2" size={20} />
+                           <span className='text-zinc-100'>Creating delivery...</span>
+                        </>
+                     ) : (
+                        <span className='text-zinc-100'>Create Delivery</span>
+                     )}
+                     </button>
+                  </div>
                </div>
             </form>
             )}

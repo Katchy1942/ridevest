@@ -98,7 +98,7 @@ const Login = () => {
 					<button 
 						type="submit" 
 						disabled={isLoading}
-						className="mt-2 w-full flex justify-center items-center bg-emerald-700 hover:bg-emerald-600 disabled:bg-emerald-800 disabled:text-emerald-300 disabled:cursor-not-allowed cursor-pointer text-base text-zinc-100 font-medium py-2 shadow-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-zinc-800"
+						className="mt-2 w-full flex justify-center items-center bg-emerald-700 hover:bg-emerald-600 disabled:bg-emerald-800 disabled:text-emerald-300 disabled:cursor-not-allowed cursor-pointer text-base text-zinc-100 font-medium py-2 shadow-sm rounded-md transition-colors"
 					>
 						{isLoading ? (
 							<>

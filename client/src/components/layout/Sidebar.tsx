@@ -1,6 +1,8 @@
-import { NavLink } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import { HugeiconsIcon } from '@hugeicons/react'
-import { Home01Icon, UserGroupIcon, Motorbike01Icon, Settings01Icon, Door01Icon, SmartPhone02Icon } from '@hugeicons/core-free-icons';
+import { Home01Icon, UserGroupIcon, Motorbike01Icon, Door01Icon, SmartPhone02Icon } from '@hugeicons/core-free-icons';
+import { toast } from 'sonner';
+import api from '@/lib/axios';
 
 interface SidebarProps {
    isOpen?: boolean;
@@ -8,13 +10,40 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen = false, onClose = () => {} }: SidebarProps) => {
+   const navigate = useNavigate();
    const navItems = [
       { name: 'Dashboard', path: '/dashboard', icon: Home01Icon },
       { name: 'Deliveries', path: '/dashboard/deliveries', icon: Motorbike01Icon },
       { name: 'Devices', path: '/dashboard/devices', icon: SmartPhone02Icon },
       { name: 'Riders', path: '/dashboard/riders', icon: UserGroupIcon },
-      { name: 'Settings', path: '/dashboard/settings', icon: Settings01Icon },
    ];
+
+   const handleLogout = () => {
+      onClose();
+      
+      toast('Are you sure you want to logout?', {
+         action: {
+            label: 'Logout',
+            onClick: async () => {
+               try {
+                  // Optional backend call
+                  await api.post('/auth/logout');
+               } catch (error) {
+                  console.error('Logout error:', error);
+               } finally {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('company');
+                  navigate('/login');
+                  toast.success('Successfully logged out');
+               }
+            },
+         },
+         cancel: {
+            label: 'Cancel',
+            onClick: () => {}
+         }
+      });
+   };
 
    return (
       <>
@@ -62,9 +91,7 @@ const Sidebar = ({ isOpen = false, onClose = () => {} }: SidebarProps) => {
 
             <div className="p-4 border-t border-zinc-800 pb-8 md:pb-4">
                <button 
-                  onClick={() => {
-                     window.location.href = '/login';
-                  }}
+                  onClick={handleLogout}
                   className="flex w-full items-center text-sm gap-3 px-4 py-3 md:py-2 text-zinc-400 hover:bg-zinc-800 hover:text-red-400 rounded-md transition-all duration-200 cursor-pointer"
                >
                   <HugeiconsIcon icon={Door01Icon} size={20} strokeWidth={1.5} />
@@ -75,5 +102,6 @@ const Sidebar = ({ isOpen = false, onClose = () => {} }: SidebarProps) => {
       </>
    );
 };
+
 
 export default Sidebar;

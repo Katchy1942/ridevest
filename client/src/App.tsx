@@ -8,14 +8,17 @@ import DevicesPage from './pages/devices/DevicesPage';
 import RidersPage from './pages/riders/RidersPage';
 import SettingsPage from './pages/settings/SettingsPage';
 import AddDeliveryPage from './pages/deliveries/AddDeliveryPage';
-import DeliveryStatusPage from './pages/deliveries/DeliveryStatusPage';
+import PaymentsResponse from './pages/deliveries/PaymentsResponse';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import TrackDelivery from './pages/deliveries/TrackDelivery';
+import DemoGuide from './pages/common/DemoGuide';
 
 const App = () => {
 	return (
 		<div className='bg-neutral-950 min-h-screen text-neutral-100'>
 			<BrowserRouter>
 				<Routes>
+					<Route path="/" element={<DemoGuide />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/register" element={<Register />} />
 					{/* Protected Routes */}
@@ -28,11 +31,12 @@ const App = () => {
 							<Route path="settings" element={<SettingsPage />} />
 						</Route>
 						<Route path="/add-delivery" element={<AddDeliveryPage />} />
-						<Route path="/delivery-status" element={<DeliveryStatusPage />} />
+						<Route path="/payment-response" element={<PaymentsResponse />} />
+						<Route path="/track-delivery" element={<TrackDelivery />} />
 					</Route>
 
 					{/* Catch-all redirect to login */}
-					<Route path="*" element={<Navigate to="/login" replace />} />
+					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>
 			</BrowserRouter>
 		</div>

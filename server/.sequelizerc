@@ -1,8 +1,8 @@
-import { resolve } from 'path';
+const path = require('path');
 
-export default {
-	'config': resolve('config', 'config.cjs'),
-	'models-path': resolve('api'),
-	'seeders-path': resolve('core', 'seeders'),
-	'migrations-path': resolve('core', 'migrations')
+module.exports = {
+  'config': path.resolve('config', 'config.cjs'),
+  'models-path': path.resolve('api'),
+  'seeders-path': path.resolve('core', 'seeders'),
+  'migrations-path': path.resolve('core', 'migrations')
 };
