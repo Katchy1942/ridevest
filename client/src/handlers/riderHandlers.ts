@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 export const useRiderHandlers = () => {
+   const navigate = useNavigate();
    const [riders, setRiders] = useState<any[]>([]);
    const [loading, setLoading] = useState(true);
    const [showAddModal, setShowAddModal] = useState(false);
@@ -59,6 +61,10 @@ export const useRiderHandlers = () => {
          await api.post('/riders/create', newRider);
          toast.success('Rider added successfully');
          setShowAddModal(false);
+         setTimeout(() => {
+				toast.info('Proceed to add a device for this rider.');
+				navigate('/dashboard/devices');
+			}, 1000);
          setNewRider({ firstName: '', lastName: '', phoneNumber: '' });
          fetchRiders();
       } catch (error: any) {

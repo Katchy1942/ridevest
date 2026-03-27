@@ -25,7 +25,10 @@ const Login = () => {
 			localStorage.setItem('company', JSON.stringify(company));
 			
 			toast.success('Successfully logged in!');
-			navigate('/dashboard');
+			setTimeout(() => {
+				toast.info('Proceed to add your riders.');
+				navigate('/dashboard/riders');
+			}, 1000);
 		} catch (err: any) {
 			const errorMessage = err.response?.data?.error || 'Login failed. Check your credentials.';
 			toast.error(errorMessage);

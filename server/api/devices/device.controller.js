@@ -28,7 +28,19 @@ export const createDevice = async (req, res) => {
       res.status(201).json(device);
    } catch (error) {
       console.error("Register Device Error:", error);
-      const errorMessage = error.response?.data || error.message || 'Internal Server Error during device registration';
+      
+      const responseData = error.response?.data;
+      let errorMessage = 'Internal Server Error during device registration';
+
+      // Catch Traccar duplicate uniqueId error (looks like a long stack trace but contains the violation)
+      if (typeof responseData === 'string' && responseData.includes('uniqueId') && responseData.includes('violation')) {
+         errorMessage = 'This Device ID (IMEI) is already used by another company. Please use a unique one.';
+      } else if (responseData?.error) {
+         errorMessage = responseData.error;
+      } else if (error.message) {
+         errorMessage = error.message;
+      }
+
       res.status(error.response?.status || 500).json({ error: errorMessage });
    }
 };

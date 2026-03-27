@@ -50,13 +50,13 @@ export const useDeviceHandlers = () => {
    }, []);
 
    useEffect(() => {
-       if (showAddModal) {
-           fetchUnassignedRiders();
-       } else {
-           // Reset success state when modal closes
-           setIsSuccess(false);
-           setRegisteredDevice(null);
-       }
+      if (showAddModal) {
+         fetchUnassignedRiders();
+      } else {
+         // Reset success state when modal closes
+         setIsSuccess(false);
+         setRegisteredDevice(null);
+      }
    }, [showAddModal]);
 
    const handleAddDevice = async (e: React.FormEvent) => {
