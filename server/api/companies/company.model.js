@@ -26,11 +26,6 @@ export default (sequelize) => {
 		supportedModes: DataTypes.ARRAY(DataTypes.STRING),
 		averageDeliveryPrice: DataTypes.FLOAT,
 		logoPath: DataTypes.STRING,
-      traccarId: {
-         type: DataTypes.INTEGER,
-         unique: true,
-         allowNull: true
-      },
 		password: {
 			type: DataTypes.STRING,
 			allowNull: false

@@ -1,38 +1,14 @@
 import models from '../../core/models.index.js';
-import { traccarRegisterDevice } from '../../core/traccar.service.js';
+// import { traccarRegisterDevice } from '../../core/traccar.service.js';
 
 export const createDevice = async (req, res) => {
    try {
       const { name, uniqueId } = req.body;
       const companyId = req.company.id;
-      const companyTraccarId = req.company.traccarId;
 
       if (!name || !uniqueId) {
          return res.status(400).json({ error: 'Name and Unique ID (IMEI) are required' });
       }
-
-      // Check if device already exists in our system
-      const existingDevice = await models.Device.findOne({ where: { uniqueId } });
-      if (existingDevice) {
-         return res.status(409).json({ error: 'Device already registered' });
-      }
-
-      // 1. Register with Traccar
-      let traccarId = null;
-      try {
-         const tDevice = await traccarRegisterDevice(name, uniqueId, companyTraccarId);
-         traccarId = tDevice.id;
-      } catch (error) {
-         console.warn("Continuing despite Traccar registration failure:", error.message);
-      }
-
-      // 2. Save in our DB
-      const device = await models.Device.create({
-         name,
-         uniqueId,
-         companyId,
-         traccarId
-      });
 
 
       res.status(201).json(device);
