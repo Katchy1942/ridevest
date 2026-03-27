@@ -11,9 +11,6 @@ export const useDeliveryHandlers = () => {
    const [loading, setLoading] = useState(false);
    const [errorMessage, setErrorMessage] = useState('');
    const [searchParams, setSearchParams] = useSearchParams();
-   const [selectedState, setSelectedState] = useState('');
-   const [companies, setCompanies] = useState<any[]>([]);
-   const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
    const [isBrandDelivery, setIsBrandDelivery] = useState(false);
    const [transportMode, setTransportMode] = useState('bike');
 
@@ -35,46 +32,27 @@ export const useDeliveryHandlers = () => {
    const [addressLoader, setAddressLoader] = useState<any>({ pickup: false, destination: false });
    const [selectedPlaceIds, setSelectedPlaceIds] = useState<any>({ pickup: null, destination: null });
 
-   const selectedCompany = companies.find(c => c.companyName === formData.courier);
-
-   useEffect(() => {
-      if (selectedCompany && !selectedCompany.supportedModes.includes(transportMode)) {
-         setTransportMode(selectedCompany.supportedModes[0] || '');
-      }
-   }, [formData.courier, selectedCompany, transportMode]);
-
    useEffect(() => {
       const companyParam = searchParams.get('company');
       if (companyParam) {
-         setFormData(prev => ({ ...prev, courier: companyParam }));
+         setFormData(prev => ({ ...prev, courier: companyParam.replace(/-/g, ' ') }));
       }
    }, [searchParams]);
 
-   const handleRegionContinue = async (state: string) => {
-      setIsLoadingCompanies(true);
-      try {
-         const response = await api.get(`/deliveries/serving-state/${state}`);
-         const foundCompanies = response.data.companies;
-
-         if (!foundCompanies || foundCompanies.length === 0) {
-            return toast.info("No logistics providers found for this state yet.");
-         }
-
-         setCompanies(foundCompanies);
-         setSelectedState(state);
-      } catch (error) {
-         console.error("Error fetching companies:", error);
-         toast.error("Failed to load available logistics providers");
-      } finally {
-         setIsLoadingCompanies(false);
-      }
-   };
-
-   const resetStateSelection = () => {
-      setSelectedState('');
-      setCompanies([]);
-      setFormData(prev => ({ ...prev, courier: '' }));
-      setSearchParams({}); // Clear URL params
+   const resetForm = () => {
+      setFormData({
+         courier: searchParams.get('company')?.replace(/-/g, ' ') || '',
+         pickup: '',
+         destination: '',
+         receiverName: '',
+         receiverPhone: '',
+         senderName: '',
+         senderPhone: '',
+         weightEstimate: '',
+         deliveryNotes: '',
+         businessName: ''
+      });
+      setSearchParams({});
    };
 
    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -112,7 +90,7 @@ export const useDeliveryHandlers = () => {
    };
 
    const handlePayment = (trackingId: string) => {
-      const price = selectedCompany?.averageDeliveryPrice || 2000;
+      const price = 2000;
       const amountInKobo = (price * 100).toString();
 
       initiateInterswitchPayment({
@@ -167,10 +145,6 @@ export const useDeliveryHandlers = () => {
    };
 
    return {
-      selectedState,
-      setSelectedState,
-      companies,
-      isLoadingCompanies,
       isBrandDelivery,
       setIsBrandDelivery,
       transportMode,
@@ -181,9 +155,7 @@ export const useDeliveryHandlers = () => {
       showSuggestions,
       addressLoader,
       selectedPlaceIds,
-      selectedCompany,
-      handleRegionContinue,
-      resetStateSelection,
+      resetForm,
       handleInputChange,
       handleAddressChange,
       handleSelectSuggestion,

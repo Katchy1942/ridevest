@@ -1,39 +1,22 @@
-import { Bike, ArrowLeft, Loader2 } from 'lucide-react';
-import {
-   Combobox,
-   ComboboxInput,
-   ComboboxContent,
-   ComboboxList,
-   ComboboxItem,
-} from '../../components/ui/combobox';
+import { Bike, Loader2 } from 'lucide-react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Car02Icon, TruckIcon } from '@hugeicons/core-free-icons';
-import RegionSelection from '../../components/deliveries/RegionSelection';
 import { useDeliveryHandlers } from '../../handlers/deliveryHandlers';
-
 
 const AddDeliveryPage = () => {
    const {
-      selectedState,
-      companies,
-      isLoadingCompanies,
       isBrandDelivery,
       setIsBrandDelivery,
       transportMode,
       setTransportMode,
       formData,
-      setFormData,
       suggestions,
       showSuggestions,
       addressLoader,
-      handleRegionContinue,
-      resetStateSelection,
       handleInputChange,
       handleAddressChange,
       handleSelectSuggestion,
       handleSubmit,
-      selectedCompany,
-      searchParams,
       errorMessage,
       loading
    } = useDeliveryHandlers();
@@ -50,50 +33,20 @@ const AddDeliveryPage = () => {
                <p className="text-sm text-zinc-400 mt-1">Enter the details for your new delivery.</p>
             </div>
 
-            {!selectedState && !searchParams.get('company') ? (
-               <RegionSelection 
-                  onContinue={handleRegionContinue} 
-                  isLoading={isLoadingCompanies} 
-               />
-            ) : (
             <form onSubmit={handleSubmit} className="flex-1 p-6 space-y-8">
-               <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                     <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-900/30 text-emerald-500 border border-emerald-800/30">
-                        {selectedState || 'Specified Provider'}
-                     </span>
-                  </div>
-                  <button 
-                     type="button"
-                     onClick={resetStateSelection}
-                     className="text-xs flex items-center gap-1.5 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
-                  >
-                     <ArrowLeft size={14} />
-                     Change Region
-                  </button>
-               </div>
                <div className="space-y-4">
                   <h3 className="text-lg font-medium text-zinc-200">Courier</h3>
                   <div className="space-y-1.5">
-                     <label className="text-sm font-medium text-zinc-300">Available Logistics Providers</label>
-                     <Combobox value={formData.courier} onValueChange={(val: string | null) => val && setFormData(prev => ({ ...prev, courier: val }))}>
-                        <ComboboxInput placeholder="Select a company..." className="w-full bg-zinc-900 border-zinc-700 text-zinc-100 placeholder-zinc-500 focus:border-emerald-500" />
-                        <ComboboxContent className="bg-zinc-900 border-zinc-800 text-zinc-200">
-                           <ComboboxList>
-                              {isLoadingCompanies ? (
-                                 <div className="p-4 text-center text-sm text-zinc-500">Loading providers...</div>
-                              ) : companies.length > 0 ? (
-                                 companies.map((company) => (
-                                    <ComboboxItem key={company.id} value={company.companyName} className="flex justify-between w-full hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer">
-                                       <span>{company.companyName}</span>
-                                    </ComboboxItem>
-                                 ))
-                              ) : (
-                                 <div className="p-4 text-center text-sm text-zinc-500">No providers found in this state</div>
-                              )}
-                           </ComboboxList>
-                        </ComboboxContent>
-                     </Combobox>
+                     <label className="text-sm font-medium text-zinc-300">Courier Name</label>
+                     <input 
+                        type="text" 
+                        name="courier"
+                        required
+                        value={formData.courier}
+                        onChange={handleInputChange}
+                        placeholder="Logistics Company Name"
+                        className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors"
+                     />
                   </div>
                </div>
 
@@ -270,7 +223,7 @@ const AddDeliveryPage = () => {
                               { id: 'bike', label: 'Bike', Icon: Bike },
                               { id: 'car', label: 'Car', Icon: Car02Icon, isHuge: true },
                               { id: 'truck', label: 'Truck', Icon: TruckIcon, isHuge: true }
-                           ].filter(mode => !selectedCompany || selectedCompany.supportedModes.includes(mode.id)).map(mode => {
+                           ].map(mode => {
                               const Icon = mode.Icon as any;
                               return (
                                  <label key={mode.id} className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-colors cursor-pointer ${transportMode === mode.id ? 'bg-emerald-900/20 border-emerald-500 text-emerald-500' : 'bg-zinc-900 border-zinc-700 text-zinc-400 hover:bg-zinc-800'}`}>
@@ -364,7 +317,6 @@ const AddDeliveryPage = () => {
                   </div>
                </div>
             </form>
-            )}
          </div>
       </div>
    );
