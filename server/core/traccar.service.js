@@ -1,26 +1,14 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import axios from 'axios';
 
 const traccarApi = axios.create({
    baseURL: process.env.TRACCAR_URL + '/api',
    auth: {
-      username: process.env.TRACCAR_USER || 'admin',
-      password: process.env.TRACCAR_PASSWORD || 'admin'
+      username: process.env.TRACCAR_USER,
+      password: process.env.TRACCAR_PASSWORD
    }
 });
-
-export const traccarCreateUser = async (name, email, password) => {
-   try {
-      const response = await traccarApi.post('/users', {
-         name,
-         email,
-         password
-      });
-      return response.data;
-   } catch (error) {
-      console.error('Traccar User Creation Error:', error.response?.data || error.message);
-      throw error;
-   }
-};
 
 export const traccarRegisterDevice = async (name, uniqueId, userId) => {
    try {
@@ -39,7 +27,12 @@ export const traccarRegisterDevice = async (name, uniqueId, userId) => {
 
       return device;
    } catch (error) {
-      console.error('Traccar Registration Error:', error.response?.data || error.message);
+      console.error('Traccar Registration Error Detail:', {
+         status: error.response?.status,
+         data: error.response?.data,
+         message: error.message,
+         url: error.config?.url
+      });
       throw error;
    }
 };

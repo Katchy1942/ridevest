@@ -42,9 +42,14 @@ export const getRiders = async (req, res) => {
                model: models.Delivery,
                as: 'deliveries',
                attributes: []
+            },
+            {
+               model: models.Device,
+               as: 'device',
+               attributes: ['id', 'name', 'uniqueId']
             }
          ],
-         group: ['Rider.id'],
+         group: ['Rider.id', 'device.id'],
          order: [['createdAt', 'DESC']]
 		});
 		res.status(200).json(riders);

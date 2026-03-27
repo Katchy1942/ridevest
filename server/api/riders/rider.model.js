@@ -12,6 +12,11 @@ export default (sequelize) => {
 				foreignKey: 'riderId',
 				as: 'deliveries'
 			});
+
+			Rider.hasOne(models.Device, {
+				foreignKey: 'linkedRiderId',
+				as: 'device'
+			});
 		}
 	}
 

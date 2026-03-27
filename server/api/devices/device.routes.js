@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.use(requireAuth);
 
-router.post('/register', createDevice);
+router.post('/create', createDevice);
 router.get('/all', getDevices);
 router.delete('/:id', deleteDevice);
 

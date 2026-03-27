@@ -1,20 +1,35 @@
 import models from '../../core/models.index.js';
-// import { traccarRegisterDevice } from '../../core/traccar.service.js';
+import { traccarRegisterDevice } from '../../core/traccar.service.js';
 
 export const createDevice = async (req, res) => {
    try {
-      const { name, uniqueId } = req.body;
+      const { name, uniqueId, linkedRiderId } = req.body;
       const companyId = req.company.id;
 
       if (!name || !uniqueId) {
          return res.status(400).json({ error: 'Name and Unique ID (IMEI) are required' });
       }
 
+      const existingDevice = await models.Device.findOne({ where: { uniqueId } });
+      if (existingDevice) {
+         return res.status(409).json({ error: 'Device with this Unique ID already exists' });
+      }
+
+      const traccarDevice = await traccarRegisterDevice(name, uniqueId);
+
+      const device = await models.Device.create({
+         name,
+         uniqueId,
+         companyId,
+         linkedRiderId: linkedRiderId || null,
+         traccarId: traccarDevice.id
+      });
 
       res.status(201).json(device);
    } catch (error) {
       console.error("Register Device Error:", error);
-      res.status(500).json({ error: 'Internal Server Error during device registration' });
+      const errorMessage = error.response?.data || error.message || 'Internal Server Error during device registration';
+      res.status(error.response?.status || 500).json({ error: errorMessage });
    }
 };
 
@@ -22,6 +37,13 @@ export const getDevices = async (req, res) => {
    try {
       const devices = await models.Device.findAll({
          where: { companyId: req.company.id },
+         include: [
+            {
+               model: models.Rider,
+               as: 'rider',
+               attributes: ['id', 'firstName', 'lastName', 'phoneNumber']
+            }
+         ],
          order: [['createdAt', 'DESC']]
       });
       res.status(200).json(devices);

@@ -98,6 +98,56 @@ export const createDelivery = async (req, res) => {
 	}
 };
 
+export const assignRiderToDelivery = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { riderId } = req.body;
+
+		if (!riderId) {
+			return res.status(400).json({ error: 'Rider ID is required' });
+		}
+
+		const delivery = await models.Delivery.findOne({
+			where: { id, companyId: req.company.id }
+		});
+
+		if (!delivery) {
+			return res.status(404).json({ error: 'Delivery not found' });
+		}
+
+		const rider = await models.Rider.findOne({
+			where: { id: riderId, companyId: req.company.id },
+			include: [{ model: models.Device, as: 'device' }]
+		});
+
+		if (!rider) {
+			return res.status(404).json({ error: 'Rider not found' });
+		}
+
+		if (rider.status === 'on_delivery') {
+			return res.status(400).json({ error: 'Rider is already on a delivery' });
+		}
+
+		if (!rider.device) {
+			return res.status(400).json({ error: 'This rider does not have a device linked to them' });
+		}
+
+		// Update delivery
+		delivery.riderId = riderId;
+		delivery.status = 'In Transit';
+		await delivery.save();
+
+		// Update rider status
+		rider.status = 'on_delivery';
+		await rider.save();
+
+		res.status(200).json({ message: 'Rider assigned successfully', delivery });
+	} catch (error) {
+		console.error("Assign Rider Error:", error);
+		res.status(500).json({ error: 'Internal Server Error' });
+	}
+};
+
 export const getDeliveries = async (req, res) => {
 	try {
 		const deliveries = await models.Delivery.findAll({

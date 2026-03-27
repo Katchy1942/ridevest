@@ -1,5 +1,4 @@
 import models from '../../core/models.index.js';
-import { traccarCreateUser } from '../../core/traccar.service.js';
 
 export const registerCompany = async (req, res) => {
 	try {
@@ -36,15 +35,6 @@ export const registerCompany = async (req, res) => {
 		if (existingCompany) {
 			return res.status(409).json({ error: 'Email is already taken by another company' });
 		}
-
-      // 1. Create Traccar User
-      let traccarId = null;
-      try {
-         const tUser = await traccarCreateUser(companyName, email, password);
-         traccarId = tUser.id;
-      } catch (error) {
-         console.warn("Traccar User Creation skipped or failed:", error.message);
-      }
 
 		const newCompany = await models.Company.create({
 			companyName,

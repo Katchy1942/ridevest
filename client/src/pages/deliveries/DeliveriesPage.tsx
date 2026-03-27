@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Search, MoreHorizontal, Eye, Edit2, XCircle, ChevronRight } from 'lucide-react';
+import { Search, MoreHorizontal, Eye, Edit2, XCircle, ChevronRight, UserPlus } from 'lucide-react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Calendar02Icon } from '@hugeicons/core-free-icons';
 import api from '@/lib/axios';
+import AssignRiderModal from '@/components/deliveries/AssignRiderModal';
+import { toast } from 'sonner';
 
 const statusStyles = {
   'In Transit': 'bg-blue-900/30 text-blue-400',
@@ -21,23 +23,27 @@ const DeliveriesPage = () => {
 	const [search, setSearch] = useState('');
 	const [deliveries, setDeliveries] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [selectedDeliveryId, setSelectedDeliveryId] = useState<number | null>(null);
+	const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+
+	const fetchDeliveries = async () => {
+		setLoading(true);
+		try {
+			const response = await api.get('/deliveries/all');
+			setDeliveries(response.data);
+		} catch (error) {
+			console.error('Error fetching deliveries:', error);
+			toast.error('Failed to load deliveries');
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	useEffect(() => {
-		const fetchDeliveries = async () => {
-			try {
-				const response = await api.get('/deliveries/all');
-				setDeliveries(response.data);
-			} catch (error) {
-				console.error('Error fetching deliveries:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
 		fetchDeliveries();
 	}, []);
 
-	const filteredDeliveries = deliveries.filter(d => 
+	const filteredDeliveries = deliveries.filter((d: any) => 
 		(d.receiverName?.toLowerCase() || '').includes(search.toLowerCase()) || 
 		(d.trackingId?.toLowerCase() || '').includes(search.toLowerCase()) ||
 		(d.status?.toLowerCase() || '').includes(search.toLowerCase()) ||
@@ -89,7 +95,7 @@ const DeliveriesPage = () => {
 										Loading deliveries...
 									</td>
 								</tr>
-							) : filteredDeliveries.length > 0 ? filteredDeliveries.map((delivery) => (
+							) : filteredDeliveries.length > 0 ? filteredDeliveries.map((delivery: any) => (
 								<tr key={delivery.id} className="hover:bg-zinc-800/90 transition-colors group">
 									<td className="px-6 py-4">
 										<div className="flex items-center gap-2 font-medium text-zinc-100">
@@ -128,6 +134,16 @@ const DeliveriesPage = () => {
 												<button className="flex items-center cursor-pointer gap-2.5 px-2 py-1.5 text-sm text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700/50 rounded-md transition-colors w-full text-left">
 													<Eye className="w-4 h-4" />
 													View Details
+												</button>
+												<button 
+													onClick={() => {
+														setSelectedDeliveryId(delivery.id);
+														setIsAssignModalOpen(true);
+													}}
+													className="flex items-center cursor-pointer gap-2.5 px-2 py-1.5 text-sm text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700/50 rounded-md transition-colors w-full text-left"
+												>
+													<UserPlus className="w-4 h-4" />
+													Assign Rider
 												</button>
 												<div className="relative group/status flex-col flex">
 													<button className="flex items-center cursor-pointer justify-between px-2 py-1.5 text-sm text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700/50 rounded-md transition-colors w-full text-left">
@@ -169,7 +185,7 @@ const DeliveriesPage = () => {
 						<div className="p-6 text-center text-sm text-zinc-400 bg-zinc-900 border border-zinc-800 rounded-md">
 							Loading deliveries...
 						</div>
-					) : filteredDeliveries.length > 0 ? filteredDeliveries.map((delivery) => (
+					) : filteredDeliveries.length > 0 ? filteredDeliveries.map((delivery: any) => (
 						<div key={delivery.id} className="bg-zinc-900 rounded-xl p-4 space-y-6 shadow-xs">
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-2 font-medium text-zinc-100">
@@ -209,6 +225,16 @@ const DeliveriesPage = () => {
 											<Eye className="w-4 h-4" />
 											View Details
 										</button>
+										<button 
+											onClick={() => {
+												setSelectedDeliveryId(delivery.id);
+												setIsAssignModalOpen(true);
+											}}
+											className="flex items-center gap-2.5 px-2 py-1.5 text-sm text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700/50 rounded-md transition-colors w-full text-left"
+										>
+											<UserPlus className="w-4 h-4" />
+											Assign Rider
+										</button>
 										<div className="relative group/status flex-col flex">
 											<button className="flex items-center justify-between px-2 py-1.5 text-sm text-zinc-300 hover:text-zinc-100 hover:bg-zinc-700/50 rounded-md transition-colors w-full text-left">
 												<div className="flex items-center gap-2.5">
@@ -239,6 +265,13 @@ const DeliveriesPage = () => {
 					)}
 				</div>
 			</div>
+
+			<AssignRiderModal 
+				isOpen={isAssignModalOpen}
+				onClose={() => setIsAssignModalOpen(false)}
+				deliveryId={selectedDeliveryId}
+				onRiderAssigned={fetchDeliveries}
+			/>
 
 		</div>
 	);
