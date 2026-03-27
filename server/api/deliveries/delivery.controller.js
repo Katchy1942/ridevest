@@ -166,4 +166,29 @@ export const getDeliveries = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
-};
+};
+
+export const getDeliveryByTrackingId = async (req, res) => {
+	try {
+		const { trackingId } = req.params;
+		const delivery = await models.Delivery.findOne({
+			where: { trackingId },
+			include: [
+				{
+					model: models.Rider,
+					as: 'rider',
+					attributes: ['firstName', 'lastName']
+				}
+			]
+		});
+
+		if (!delivery) {
+			return res.status(404).json({ error: 'Delivery not found' });
+		}
+
+		res.status(200).json(delivery);
+	} catch (error) {
+		console.error("Tracking Error:", error);
+		res.status(500).json({ error: 'Internal Server Error' });
+	}
+};

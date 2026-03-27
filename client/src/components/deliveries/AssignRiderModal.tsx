@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2, User, Phone, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Loader2, User, CheckCircle2, AlertCircle } from 'lucide-react';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 
@@ -93,10 +93,6 @@ const AssignRiderModal = ({
                                     {rider.firstName} {rider.lastName}
                                  </h4>
                                  <div className="flex items-center gap-2 mt-0.5">
-                                    <span className="flex items-center gap-1 text-[10px] text-zinc-500">
-                                       <Phone className="w-3 h-3" />
-                                       {rider.phoneNumber}
-                                    </span>
                                     <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${rider.status === 'online' ? 'bg-emerald-900/30 text-emerald-400' : 'bg-zinc-800 text-zinc-400'}`}>
                                        {rider.status}
                                     </span>

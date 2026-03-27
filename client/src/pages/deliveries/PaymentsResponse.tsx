@@ -42,7 +42,8 @@ const PaymentsResponse = () => {
          </div>
 
          <p className="mt-8 text-zinc-500 text-sm">
-            Need help? <a href='mailto:stanleyonahu@gmail.com' className="text-zinc-300"> Contact support.</a>
+           For demo purposes navigate to <a href={`https://ridevest.vercel.app/dashboard/deliveries`} target="_blank" rel="noopener noreferrer" className="text-emerald-500"> deliveries </a>
+           to assign a rider before tracking.
          </p>
       </div>
    );

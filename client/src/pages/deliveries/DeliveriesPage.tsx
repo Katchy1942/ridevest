@@ -109,7 +109,7 @@ const DeliveriesPage = () => {
 										</div>
 									</td>
 									<td className="px-6 py-4">
-										<span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyles[delivery.status as keyof typeof statusStyles] || 'bg-zinc-800 text-zinc-400'}`}>
+										<span className={`inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-medium ${statusStyles[delivery.status as keyof typeof statusStyles] || 'bg-zinc-800 text-zinc-400'}`}>
 											{formatStatus(delivery.status)}
 										</span>
 									</td>
@@ -191,7 +191,7 @@ const DeliveriesPage = () => {
 								<div className="flex items-center gap-2 font-medium text-zinc-100">
 									{delivery.trackingId}
 								</div>
-								<span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusStyles[delivery.status as keyof typeof statusStyles] || 'bg-zinc-800 text-zinc-400'}`}>
+								<span className={`inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-medium ${statusStyles[delivery.status as keyof typeof statusStyles] || 'bg-zinc-800 text-zinc-400'}`}>
 									{formatStatus(delivery.status)}
 								</span>
 							</div>
