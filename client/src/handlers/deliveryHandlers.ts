@@ -129,10 +129,7 @@ export const useDeliveryHandlers = () => {
 
          if (response.status === 201) {
             toast.success("Delivery created successfully!");
-            setTimeout(() => {
-               toast.info("Proceeding to payment...");
-               handlePayment(trackingId);
-            }, 1000);
+            navigate(`/payment-response?trackingId=${trackingId}`);
          }
       } catch (error: any) {
          console.error("Error creating delivery:", error);
