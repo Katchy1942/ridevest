@@ -51,7 +51,6 @@ export const registerCompany = async (req, res) => {
 			averageDeliveryPrice,
 			password, 
 			confirmPassword,
-         traccarId
 		});
 
 		const companyData = newCompany.toJSON();
