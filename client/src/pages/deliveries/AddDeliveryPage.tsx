@@ -24,9 +24,6 @@ const AddDeliveryPage = () => {
 
    return (
       <div className='min-h-screen flex flex-col justify-center items-center md:p-10 p-4'>
-         <h1 className='font-serif text-4xl tracking-tighter font-extralight text-emerald-600 mb-6 text-center'>
-            ridevest<span className='font-black'>.</span>
-         </h1>
          <div className="bg-zinc-900 border border-zinc-800 shadow-xl w-full max-w-[550px] rounded-xl flex flex-col">
             <div className="px-6 py-6 shrink-0 border-b border-zinc-800/60">
                <h2 className="text-xl font-semibold text-zinc-50 tracking-tight">Create Delivery</h2>

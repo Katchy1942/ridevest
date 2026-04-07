@@ -10,10 +10,6 @@ const PaymentsResponse = () => {
 
    return (
       <div className='min-h-screen bg-neutral-950 flex flex-col justify-center items-center md:p-10 p-4'>
-         <h1 className='font-serif text-4xl tracking-tighter font-extralight text-emerald-600 mb-8 text-center'>
-            ridevest<span className='font-black'>.</span>
-         </h1>
-
          <div className="bg-zinc-900 border border-zinc-800 max-w-md shadow-sm w-full rounded-xl p-6 flex flex-col items-center text-center">
             <div className="space-y-6 flex flex-col items-center animate-in fade-in zoom-in duration-500">
                <div className="relative">

@@ -321,7 +321,7 @@ const TrackDelivery = () => {
                         setActiveView(viewKey as 'details' | 'timeline');
                         if (window.innerWidth < 768) setExpanded(true);
                      } else {
-                        toast.info('Route view coming soon — will center the map on the delivery route.');
+                        toast.info('Route view coming soon.');
                      }
                   };
 
