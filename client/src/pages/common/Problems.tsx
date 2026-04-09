@@ -1,7 +1,7 @@
 const Problems = () => {
    return (
       <section className="min-h-screen flex flex-col px-6">
-         <div className="flex justify-between w-full max-w-[1400px] mx-auto pt-24 flex-col lg:flex-row gap-8">
+         <div className="flex justify-between w-full max-w-[1400px] mx-auto flex-col lg:flex-row gap-8">
             <h2 className="text-2xl md:text-4xl max-w-3xl text-zinc-400 tracking-tighter font-medium font-serif mb-6">Logistics shouldn't be this hard.</h2>
             <p className="font-medium text-md md:text-lg text-zinc-500 mb-8 max-w-xl">Most dispatch businesses in Nigeria run on WhatsApp groups, phone calls, and guesswork. You're losing money, time, and customers every single day.</p>
          </div>

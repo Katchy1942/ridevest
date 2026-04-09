@@ -56,7 +56,7 @@ const Sidebar = ({ isOpen = false, onClose = () => {} }: SidebarProps) => {
 
          <aside className={`
             fixed z-50 bg-zinc-900 flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]
-            md:w-64 md:h-screen md:top-0 md:left-0 md:border-r md:border-t-0 md:border-zinc-800 md:translate-y-0 md:rounded-none
+            md:w-64 md:h-screen md:top-0 md:left-0 md:translate-y-0 md:rounded-none
             w-full h-[85vh] bottom-0 left-0 border-t border-zinc-800 rounded-t-4xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-none
             ${isOpen ? 'translate-y-0' : 'translate-y-full'}
          `}>
