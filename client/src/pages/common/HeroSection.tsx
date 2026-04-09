@@ -10,9 +10,9 @@ const HeroSection = () => {
             Track riders in real time, manage deliveries effortlessly, and get full visibility into your logistics — all in one place.
          </p>
          <div className="flex flex-col sm:flex-row gap-4 mb-16">
-            <button className="w-fit bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-8 py-3 rounded-full transition-colors cursor-pointer">
+            <a href="https://wa.me/2349122454898?text=Hello,%20I'm%20interested%20in%20a%20demo%20of%20Ridevest." target="_blank" rel="noopener noreferrer" className="w-fit bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-8 py-3 rounded-full transition-colors cursor-pointer">
                Book a demo
-            </button>
+            </a>
          </div>
 
          {/* App Demo Placeholder */}
