@@ -54,7 +54,7 @@ const DevicesPage = () => {
 			{/* Main Content */}
 			<div className="space-y-4">
 				{/* Desktop Table View */}
-				<div className="hidden md:block overflow-visible bg-zinc-900 border border-zinc-800 rounded-md shadow-sm">
+				<div className="hidden md:block overflow-visible bg-zinc-900 rounded-md shadow-sm">
 					<table className="w-full text-sm text-left">
 						<thead className="bg-zinc-950/50 border-b border-zinc-800 text-zinc-400 font-medium">
 							<tr>
