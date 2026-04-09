@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react';
+import liveTrackingUi from "../../assets/images/live-tracking-ui.png";
+import smartDispatchingUi from "../../assets/images/rider-matching-ui.png";
+import financialControlUi from "../../assets/images/payments-ui.png";
 
-const SlideCard = ({ subtitle, description, bgClass, glowClass, children }: { subtitle: string, description: string, bgClass: string, glowClass: string, children?: ReactNode }) => (
+const SlideCard = ({ subtitle, description, bgClass, glowClass, children, img }: { subtitle: string, description: string, bgClass: string, glowClass: string, children?: ReactNode, img: string }) => (
    <div className="sticky top-0 h-screen w-full flex items-center justify-center bg-black">
       <div className={`w-full max-w-7xl h-full max-h-[850px] overflow-hidden flex flex-col relative ${bgClass}`}>
          {/* Background Glow */}
@@ -9,14 +12,28 @@ const SlideCard = ({ subtitle, description, bgClass, glowClass, children }: { su
          {/* Grid pattern overlay */}
          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPPHBhdGggZD0iTTAgMTBoNDBNMTAgMHY0ME0wIDIwaDQwTTIwIDB2NDBNMCAzMGg0ME0zMCAwdjQwIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMikiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==')] opacity-50 z-0"></div>
 
-         <div className="relative z-10 w-full flex flex-col items-center text-center px-6 pt-16 md:pt-24 shrink-0">
+         <div className="relative z-10 w-full flex flex-col px-6 pt-8 md:pt-12 shrink-0">
             <span className="text-xs md:text-xs font-extralight tracking-[0.2em] uppercase font-mono text-white/50">{subtitle}</span>
-            <p className="text-md md:text-lg font-medium text-white/50 max-w-2xl mt-2">{description}</p>
+            <p className="text-md md:text-lg font-medium text-white/50 max-w-2xl mb-4">{description}</p>
          </div>
-         
-         <div className="relative z-10 flex-1 w-full flex items-center justify-center min-h-0 pb-12 mt-8 md:mt-0">
-            {children}
+
+         <div className="relative z-10 flex-1 w-full mt-4 px-6 pb-8 md:pb-12 min-h-0">
+            <div className="w-full h-full overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] rounded-xl">
+               <div className="w-[250vw] sm:w-full min-w-[800px] sm:min-w-0 h-full bg-zinc-900/50 overflow-hidden flex flex-col backdrop-blur-md mx-auto">
+                  {/* Inner Content Area */}
+                  <img src={img} alt="solution image" className="flex-1 w-full h-full object-cover object-top-left sm:object-top" />
+               </div>
+            </div>
+            
+            {/* Scroll indicator shadow */}
+            <div className="absolute top-0 right-6 bottom-8 md:bottom-12 w-24 bg-linear-to-l from-black/80 to-transparent pointer-events-none rounded-r-xl sm:hidden"></div>
          </div>
+
+         {children && (
+            <div className="relative z-10 w-full flex items-center justify-center pb-12 mt-4 md:mt-0">
+               {children}
+            </div>
+         )}
       </div>
    </div>
 );
@@ -44,6 +61,7 @@ const Solutions = () => {
                description="Stop calling riders. Watch them move on an interactive map in real time. Give your customers perfectly accurate ETAs."
                bgClass="bg-zinc-950"
                glowClass="bg-amber-500/20"
+               img={liveTrackingUi}
             >
             </SlideCard>
 
@@ -52,6 +70,7 @@ const Solutions = () => {
                description="Our algorithm instantly pairs the nearest available rider with the pickup location, optimizing routes and slashing delivery times."
                bgClass="bg-[#020617]" /* slate-950 */
                glowClass="bg-blue-500/20"
+               img={smartDispatchingUi}
             >
             </SlideCard>
 
@@ -60,17 +79,9 @@ const Solutions = () => {
                description="Auto-reconcile cash payments. Track outstanding debts. Get a birds-eye view of your daily, weekly, and monthly remittances."
                bgClass="bg-[#022c22]" /* emerald-950 */
                glowClass="bg-emerald-500/20"
+               img={financialControlUi}
             >
             </SlideCard>
-
-            <SlideCard 
-               subtitle="Customer CRM"
-               description="Store customer addresses, order history, and preferences instantly. Turn one-time deliveries into loyal VIPs."
-               bgClass="bg-[#2e1065]" /* purple-950 */
-               glowClass="bg-purple-500/20"
-            >
-            </SlideCard>
-
          </div>
 
          {/* Add the custom animation keyframe to the doc */}
