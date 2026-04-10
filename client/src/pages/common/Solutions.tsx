@@ -17,7 +17,7 @@ const SlideCard = ({ subtitle, description, bgClass, glowClass, children, img }:
             <p className="text-md md:text-lg font-medium text-white/50 max-w-2xl mb-4">{description}</p>
          </div>
 
-         <div className="relative z-10 flex-1 w-full mt-4 px-6 pb-8 md:pb-12 min-h-0">
+         <div className="relative z-10 flex-1 w-full px-6 pb-4 md:pb-4 min-h-0">
             <div className="w-full h-full overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] rounded-xl">
                <div className="w-[250vw] sm:w-full min-w-[800px] sm:min-w-0 h-full bg-zinc-900/50 overflow-hidden flex flex-col backdrop-blur-md mx-auto">
                   {/* Inner Content Area */}
@@ -26,7 +26,7 @@ const SlideCard = ({ subtitle, description, bgClass, glowClass, children, img }:
             </div>
             
             {/* Scroll indicator shadow */}
-            <div className="absolute top-0 right-6 bottom-8 md:bottom-12 w-24 bg-linear-to-l from-black/80 to-transparent pointer-events-none rounded-r-xl sm:hidden"></div>
+            <div className="absolute top-0 right-6 bottom-4 md:bottom-12 w-24 bg-linear-to-l from-black/80 to-transparent pointer-events-none rounded-r-xl sm:hidden"></div>
          </div>
 
          {children && (
