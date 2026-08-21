@@ -1,15 +1,14 @@
 import { useState, useRef } from 'react';
-import { X } from 'lucide-react';
-import { HugeiconsIcon } from '@hugeicons/react'
-import { ImageUploadIcon } from '@hugeicons/core-free-icons';
+import { X, Camera, ImagePlus } from 'lucide-react';
 
 
 interface ImageUploadProps {
 	onImageSelect: (file: File | null) => void;
 	disabled?: boolean;
+	variant?: 'default' | 'avatar';
 }
 
-export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
+export const ImageUpload = ({ onImageSelect, disabled, variant = 'default' }: ImageUploadProps) => {
 	const [preview, setPreview] = useState<string | null>(null);
 	const [isHovered, setIsHovered] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -58,6 +57,82 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
 		}
 	};
 
+	const input = (
+		<input
+			type="file"
+			ref={fileInputRef}
+			onChange={handleChange}
+			accept="image/*"
+			disabled={disabled}
+			className="hidden"
+		/>
+	);
+
+	if (variant === 'avatar') {
+		return (
+			<div className="flex items-center gap-4">
+				{input}
+				<div
+					className={`relative w-60 h-60 rounded-xl overflow-hidden shrink-0 border border-dashed transition-all duration-200 ${
+						disabled
+							? 'opacity-50 cursor-not-allowed border-zinc-700'
+							: 'cursor-pointer border-zinc-700 hover:border-emerald-500'
+					}`}
+					onClick={() => !disabled && fileInputRef.current?.click()}
+					onMouseEnter={() => !disabled && setIsHovered(true)}
+					onMouseLeave={() => setIsHovered(false)}
+					onDragOver={handleDragOver}
+					onDragLeave={handleDragLeave}
+					onDrop={handleDrop}
+				>
+					{preview ? (
+						<>
+							<img src={preview} alt="Profile preview" className="w-full h-full object-cover" />
+							{/* hover overlay */}
+							<div className={`absolute inset-0 bg-zinc-950/60 flex items-center justify-center transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+							</div>
+							{/* remove button */}
+							<button
+								type="button"
+								onClick={clearImage}
+								className="absolute top-0.5 right-0.5 p-0.5 bg-red-500/80 text-white rounded-full hover:bg-red-500 cursor-pointer transition-all duration-200 shadow"
+							>
+								<X size={10} />
+							</button>
+						</>
+					) : (
+						<div className={`w-full h-full flex items-center justify-center transition-colors duration-200 ${isHovered ? 'bg-emerald-500/10' : ''}`}>
+							<ImagePlus size={32} strokeWidth={1.5} className={`transition-colors duration-200 ${isHovered ? 'text-emerald-400' : 'text-zinc-500'}`} />
+						</div>
+					)}
+				</div>
+
+				<div className="flex flex-col gap-1">
+					<button
+						type="button"
+						disabled={disabled}
+						onClick={() => !disabled && fileInputRef.current?.click()}
+						className="text-xs font-medium text-emerald-500 hover:text-emerald-400 transition-colors cursor-pointer disabled:opacity-50 text-left"
+					>
+						{preview ? 'Change photo' : 'Upload photo'}
+					</button>
+					<p className="text-[11px] text-zinc-500 leading-tight">
+						JPG, PNG or WEBP<br />Max. 5MB
+					</p>
+					{preview && (
+						<button
+							type="button"
+							onClick={clearImage}
+							className="text-[11px] text-red-500/70 hover:text-red-400 transition-colors cursor-pointer text-left"
+						>
+							Remove
+						</button>
+					)}
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div 
 			className={`relative w-full border border-dashed rounded-lg transition-all duration-200 overflow-hidden ${
@@ -72,14 +147,7 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
 			onDragLeave={handleDragLeave}
 			onDrop={handleDrop}
 		>
-			<input
-			type="file"
-			ref={fileInputRef}
-			onChange={handleChange}
-			accept="image/*"
-			disabled={disabled}
-			className="hidden"
-			/>
+			{input}
 			
 			{preview ? (
 			<div className="relative w-full h-40 flex items-center justify-center p-2 group">
@@ -97,9 +165,9 @@ export const ImageUpload = ({ onImageSelect, disabled }: ImageUploadProps) => {
 			) : (
 			<div className="flex flex-col items-center justify-center py-8 px-4 text-center">
 				<div className={`p-3 rounded-full mb-3 transition-colors ${
-					isHovered ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800/80 text-zinc-400'
+					isHovered ? 'bg-emerald-500/20 text-emerald-400' : 'text-zinc-400'
 				}`}>
-					<HugeiconsIcon icon={ImageUploadIcon} size={28} strokeWidth={1.5} />
+					<ImagePlus size={28} strokeWidth={1.5} />
 				</div>
 				<p className="text-sm font-medium text-zinc-300 mb-1 pointer-events-none">
 					Click to upload <span className="text-zinc-500 font-normal">or drag and drop</span>

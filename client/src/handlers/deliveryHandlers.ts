@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
-import { fetchSuggestions } from '@/lib/googlemaps';
-import { initiateInterswitchPayment } from '@/lib/interswitch';
 
 export const useDeliveryHandlers = () => {
    const navigate = useNavigate();
@@ -11,7 +9,6 @@ export const useDeliveryHandlers = () => {
    const [loading, setLoading] = useState(false);
    const [errorMessage, setErrorMessage] = useState('');
    const [searchParams, setSearchParams] = useSearchParams();
-   const [isBrandDelivery, setIsBrandDelivery] = useState(false);
    const [transportMode, setTransportMode] = useState('bike');
 
    const [formData, setFormData] = useState({
@@ -75,41 +72,13 @@ export const useDeliveryHandlers = () => {
       setSelectedPlaceIds((prev: any) => ({ ...prev, [name]: null }));
       setAddressLoader((prev: any) => ({ ...prev, [name]: true }));
 
-      fetchSuggestions(value).then(results => {
-         setSuggestions((prev: any) => ({ ...prev, [name]: results }));
-         setShowSuggestions((prev: any) => ({ ...prev, [name]: results.length > 0 }));
-      }).finally(() => {
-         setAddressLoader((prev: any) => ({ ...prev, [name]: false }));
-      });
+      
    };
 
    const handleSelectSuggestion = (text: string, field: 'pickup' | 'destination', placeId: string) => {
       setFormData(prev => ({ ...prev, [field]: text }));
       setSelectedPlaceIds((prev: any) => ({ ...prev, [field]: placeId }));
       setShowSuggestions((prev: any) => ({ ...prev, [field]: false }));
-   };
-
-   const handlePayment = (trackingId: string) => {
-      const price = 2000;
-      const amountInKobo = (price * 100).toString();
-
-      initiateInterswitchPayment({
-         amount: amountInKobo,
-         customerEmail: "[EMAIL_ADDRESS]",
-         customerName: formData.senderName || "Test User",
-         customerId: "user_001",
-         trackingId,
-         onComplete: (response: any) => {
-            console.log("Payment Response:", response);
-            if (response.resp === "00") {
-               navigate(`/payment-response?txnref=${response.txnref}&amount=${amountInKobo}&trackingId=${trackingId}`);
-            } else if (response.resp === "Z6")  {
-               toast.error("Payment cancelled");
-            }  else if (response.resp === "01") {
-               toast.error("Payment failed");
-            }
-         }
-      });
    };
 
    const handleSubmit = async (e: React.FormEvent) => {
@@ -123,13 +92,10 @@ export const useDeliveryHandlers = () => {
             ...formData, 
             transportMode,
             trackingId,
-            pickupPlaceId: selectedPlaceIds.pickup,
-            destinationPlaceId: selectedPlaceIds.destination
          });
 
          if (response.status === 201) {
             toast.success("Delivery created successfully!");
-            navigate(`/payment-response?trackingId=${trackingId}`);
          }
       } catch (error: any) {
          console.error("Error creating delivery:", error);
@@ -142,8 +108,6 @@ export const useDeliveryHandlers = () => {
    };
 
    return {
-      isBrandDelivery,
-      setIsBrandDelivery,
       transportMode,
       setTransportMode,
       formData,
@@ -156,10 +120,10 @@ export const useDeliveryHandlers = () => {
       handleInputChange,
       handleAddressChange,
       handleSelectSuggestion,
-      handlePayment,
       handleSubmit,
       searchParams,
       errorMessage,
+      setErrorMessage,
       loading
    };
 };

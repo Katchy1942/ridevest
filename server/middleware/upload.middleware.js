@@ -28,3 +28,21 @@ const fileFilter = (req, file, cb) => {
 };
 
 export const uploadLogo = multer({ storage, fileFilter });
+
+const riderUploadDir = 'uploads/riders';
+if (!fs.existsSync(riderUploadDir)) {
+   fs.mkdirSync(riderUploadDir, { recursive: true });
+}
+
+const riderStorage = multer.diskStorage({
+   destination: (req, file, cb) => {
+      cb(null, riderUploadDir);
+   },
+   filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const ext = path.extname(file.originalname);
+      cb(null, `${uniqueSuffix}${ext}`);
+   }
+});
+
+export const uploadProfilePhoto = multer({ storage: riderStorage, fileFilter });

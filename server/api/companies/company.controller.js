@@ -89,3 +89,17 @@ export const getCompaniesByState = async (req, res) => {
 		return res.status(500).json({ error: 'Failed to fetch companies' });
 	}
 };
+
+export const getAllCompanies = async (req, res) => {
+	try {
+		const companies = await models.Company.findAll({
+			attributes: ['id', 'companyName', 'logoPath', 'state'],
+			order: [['companyName', 'ASC']]
+		});
+
+		return res.status(200).json({ companies });
+	} catch (error) {
+		console.error("Fetch All Companies Error:", error);
+		return res.status(500).json({ error: 'Failed to fetch companies' });
+	}
+};

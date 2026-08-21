@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+
+export const getImageUrl = (path?: string) => {
+   if (!path) return '';
+   if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
+      return path;
+   }
+   const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+   const backendOrigin = apiBaseUrl.replace(/\/api\/?$/, '');
+   const cleanPath = path.startsWith('/') ? path : `/${path}`;
+   return `${backendOrigin}${cleanPath}`;
+};
 
 export const useRiderHandlers = () => {
-   const navigate = useNavigate();
    const [riders, setRiders] = useState<any[]>([]);
    const [loading, setLoading] = useState(true);
-   const [showAddModal, setShowAddModal] = useState(false);
-   const [newRider, setNewRider] = useState({
-      firstName: '',
-      lastName: '',
-      phoneNumber: ''
-   });
-   const [isSubmitting, setIsSubmitting] = useState(false);
 
    const fetchRiders = async () => {
       try {
@@ -23,7 +25,8 @@ export const useRiderHandlers = () => {
          console.error('Error fetching riders:', error);
          toast.error('Failed to load riders');
       } finally {
-         setLoading(false);
+         setLoading(false);		 
+
       }
    };
 
@@ -54,38 +57,11 @@ export const useRiderHandlers = () => {
       }
    };
 
-   const handleAddRider = async (e: React.FormEvent) => {
-      e.preventDefault();
-      setIsSubmitting(true);
-      try {
-         await api.post('/riders/create', newRider);
-         toast.success('Rider added successfully');
-         setShowAddModal(false);
-         setTimeout(() => {
-				toast.info('Proceed to add a device for this rider.');
-				navigate('/dashboard/devices');
-			}, 1000);
-         setNewRider({ firstName: '', lastName: '', phoneNumber: '' });
-         fetchRiders();
-      } catch (error: any) {
-         console.error('Error adding rider:', error);
-         toast.error(error.response?.data?.error || 'Failed to add rider');
-      } finally {
-         setIsSubmitting(false);
-      }
-   };
-
    return {
       riders,
       loading,
-      showAddModal,
-      setShowAddModal,
-      newRider,
-      setNewRider,
-      isSubmitting,
       fetchRiders,
       handleUpdateStatus,
-      handleRemoveRider,
-      handleAddRider
+      handleRemoveRider
    };
 };

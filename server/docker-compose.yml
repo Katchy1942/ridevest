@@ -3,6 +3,11 @@ services:
     image: postgis/postgis:15-3.4-alpine
     container_name: ridevest-db
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -29,6 +34,8 @@ services:
       - "3000:3000"
     volumes:
       - ./uploads:/app/uploads
+      - .:/app
+      - /app/node_modules
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-ridevest}
@@ -36,8 +43,10 @@ services:
       - TRACCAR_URL=http://host.docker.internal:8082
       - PORT=3000
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

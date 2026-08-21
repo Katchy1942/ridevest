@@ -12,27 +12,34 @@ export default (sequelize) => {
 				foreignKey: 'riderId',
 				as: 'deliveries'
 			});
-
-			Rider.hasOne(models.Device, {
-				foreignKey: 'linkedRiderId',
-				as: 'device'
-			});
 		}
 	}
 
 	Rider.init({
-		firstName: {
+		fullName: {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
-		lastName: {
-			type: DataTypes.STRING,
-			allowNull: false
-		},
-		phoneNumber: {
+		phone: {
 			type: DataTypes.STRING,
 			unique: true,
 			allowNull: false
+		},
+		whatsappNumber: {
+			type: DataTypes.STRING,
+			allowNull: false
+		},
+		trackerId: {
+			type: DataTypes.STRING,
+			allowNull: false
+		},
+		password: {
+			type: DataTypes.STRING,
+			allowNull: false
+		},
+		profilePhoto: {
+			type: DataTypes.STRING,
+			allowNull: true
 		},
 		status: {
 			type: DataTypes.ENUM('online', 'offline', 'on_delivery'),
@@ -41,7 +48,27 @@ export default (sequelize) => {
 		companyId: {
 			type: DataTypes.INTEGER,
 			allowNull: false
-		}		
+		},
+		firstName: {
+			type: DataTypes.VIRTUAL,
+			get() {
+				const name = this.getDataValue('fullName') || '';
+				return name.split(' ')[0] || '';
+			}
+		},
+		lastName: {
+			type: DataTypes.VIRTUAL,
+			get() {
+				const name = this.getDataValue('fullName') || '';
+				return name.split(' ').slice(1).join(' ') || '';
+			}
+		},
+		phoneNumber: {
+			type: DataTypes.VIRTUAL,
+			get() {
+				return this.getDataValue('phone');
+			}
+		}
 	}, {
 		sequelize,
 		modelName: 'Rider'
