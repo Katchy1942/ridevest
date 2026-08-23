@@ -12,4 +12,4 @@ methods.
 
 - **Live App:** [ridevest.vercel.app](ridevest.vercel.app/)
 
-> Delivery shouldn't fail this often. Ridevest is building a system where it doesn't.
+> Still in development.
