@@ -1,12 +1,6 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ArrowRight, SquareKanban } from "lucide-react";
 
-const navLinks = [
-	{ label: "About", to: "/about" },
-	{ label: "Products", to: "/products" },
-	{ label: "Solutions", to: "/solutions" },
-	{ label: "Company", to: "/company" },
-];
 
 const Header = () => {
 	const isSignedIn = !!localStorage.getItem("token");

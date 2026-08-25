@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Loader2, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { Loader2, ArrowUpRight } from "lucide-react";
 
 interface ConfirmLocationModalProps {
 	isOpen: boolean;
@@ -20,18 +20,13 @@ interface ConfirmLocationModalProps {
 	loading: boolean;
 }
 
-const transportLabel: Record<string, string> = {
-	bike: "Bike",
-	car: "Car",
-	truck: "Truck",
-};
 
 const ConfirmLocationModal = ({
 	isOpen,
 	onClose,
 	onConfirm,
 	formData,
-	transportMode,
+	transportMode: _transportMode,
 	loading,
 }: ConfirmLocationModalProps) => {
 	const overlayRef = useRef<HTMLDivElement>(null);
@@ -167,14 +162,5 @@ const ConfirmLocationModal = ({
 		</div>
 	);
 };
-
-const DetailCard = ({ label, value }: { label: string; value: string }) => (
-	<div className="bg-zinc-800/60 rounded-xl px-3 py-2.5">
-		<p className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest mb-0.5">
-			{label}
-		</p>
-		<p className="text-xs text-zinc-300 truncate">{value || "—"}</p>
-	</div>
-);
 
 export default ConfirmLocationModal;

@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { Loader2, AlertCircle, Star, X } from "lucide-react";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { UserAdd01Icon } from "@hugeicons/core-free-icons";
+import { Loader2, Star, X } from "lucide-react";
 import api from "@/lib/axios";
 import { toast } from "sonner";
 import { getImageUrl } from "@/handlers/riderHandlers";

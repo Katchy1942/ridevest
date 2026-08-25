@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { X, Camera, ImagePlus } from 'lucide-react';
+import { X, ImagePlus } from 'lucide-react';
 
 
 interface ImageUploadProps {

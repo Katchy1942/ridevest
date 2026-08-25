@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 
 export const useDeliveryHandlers = () => {
-   const navigate = useNavigate();
-
    const [loading, setLoading] = useState(false);
    const [errorMessage, setErrorMessage] = useState('');
    const [searchParams, setSearchParams] = useSearchParams();
