@@ -1,21 +1,21 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import DashboardLayout from './components/layout/DashboardLayout';
-import PublicLayout from './components/layout/PublicLayout';
-import DashboardPage from './pages/dashboard/DashboardPage';
-import DeliveriesPage from './pages/deliveries/DeliveriesPage';
-import RidersPage from './pages/riders/RidersPage';
-import SettingsPage from './pages/settings/SettingsPage';
-import AddDeliveryPage from './pages/deliveries/AddDeliveryPage';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import TrackDelivery from './pages/deliveries/TrackDelivery';
-import Home from './pages/common/Home';
-import DeliveryPayment from './pages/payments/DeliveryPayment';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import DashboardLayout from "./components/layout/DashboardLayout";
+import PublicLayout from "./components/layout/PublicLayout";
+import DashboardPage from "./pages/dashboard/DashboardPage";
+import DeliveriesPage from "./pages/deliveries/DeliveriesPage";
+import RidersPage from "./pages/riders/RidersPage";
+import SettingsPage from "./pages/settings/SettingsPage";
+import AddDeliveryPage from "./pages/deliveries/AddDeliveryPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import TrackDelivery from "./pages/deliveries/TrackDelivery";
+import Home from "./pages/common/Home";
+// import DeliveryPayment from './pages/payments/DeliveryPayment';
 
 const App = () => {
 	return (
-		<div className='bg-neutral-950 min-h-screen text-neutral-100'>
+		<div className="bg-neutral-950 min-h-screen text-neutral-100">
 			<BrowserRouter>
 				<Routes>
 					<Route element={<PublicLayout />}>
@@ -23,10 +23,13 @@ const App = () => {
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
 						<Route path="/track-delivery" element={<TrackDelivery />} />
-						<Route path="/pay" element={<DeliveryPayment />} />
+						{/* <Route path="/pay" element={<DeliveryPayment />} /> */}
 						{/* Protected non-dashboard routes */}
 						<Route element={<ProtectedRoute />}>
-							<Route path="/add-delivery" element={<AddDeliveryPage />} />
+							<Route
+								path="/add-delivery"
+								element={<AddDeliveryPage />}
+							/>
 						</Route>
 					</Route>
 					{/* Protected Dashboard Routes */}
@@ -44,7 +47,7 @@ const App = () => {
 				</Routes>
 			</BrowserRouter>
 		</div>
-	)
-}
+	);
+};
 
 export default App;
