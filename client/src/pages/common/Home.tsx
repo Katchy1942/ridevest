@@ -1,11 +1,11 @@
 import HeroSection from "../../components/common/HeroSection";
-import ProductInfoSection from "../../components/common/ProductInfoSection";
+// import ProductInfoSection from "../../components/common/ProductInfoSection";
 
 const Home = () => {
 	return (
 		<>
 			<HeroSection />
-			<ProductInfoSection />
+			{/* <ProductInfoSection /> */}
 		</>
 	);
 };
