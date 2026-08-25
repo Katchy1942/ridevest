@@ -1,0 +1,3 @@
+.vscode/*
+.agents/*
+!.vscode/extensions.json
