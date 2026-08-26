@@ -13,7 +13,7 @@ methods.
 - **Live App:** [ridevest.name.ng/](https://ridevest.name.ng/)
 - **Screenshots:**
 
-## Team
+## Developer
 
 1. **Stanley Onah** _(Full-stack Developer)_:
 
@@ -77,7 +77,7 @@ methods.
 2. Handling inconsistent user availability during deliveries
 3. Handling unreliable network conditions during tracking
 
-## What We Learned
+## What I Learned
 
 1. Real-time systems require strong fallback mechanisms
 2. UX plays a huge role in delivery success
