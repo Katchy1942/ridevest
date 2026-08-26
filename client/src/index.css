@@ -126,6 +126,10 @@
    }
 }
 
+body {
+	background-color: #111111;
+}
+
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
