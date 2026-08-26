@@ -1,46 +1,18 @@
-import { useState } from "react";
 import { Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
-import { Link, useNavigate } from "react-router-dom";
-import api from "@/lib/axios";
+import { Link } from "react-router-dom";
+import { useRiderLoginHandler } from "@/handlers/authHandlers";
 
 const RiderLogin = () => {
-	const navigate = useNavigate();
-	const [phone, setPhone] = useState("");
-	const [password, setPassword] = useState("");
-	const [showPassword, setShowPassword] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-
-	const handleLogin = async (e: React.FormEvent) => {
-		e.preventDefault();
-		if (!phone.trim()) return toast.error("Mobile number is required");
-		if (!password) return toast.error("Password is required");
-
-		setIsLoading(true);
-
-		try {
-			const response = await api.post("/riders/login", { phone, password });
-			const { token, rider } = response.data;
-
-			// Store token and rider data
-			localStorage.setItem("token", token);
-			localStorage.setItem("rider", JSON.stringify(rider));
-			localStorage.setItem("userRole", "rider");
-
-			toast.success("Successfully logged in!");
-			setTimeout(() => {
-				navigate("/dashboard/riders");
-			}, 1000);
-		} catch (err: any) {
-			console.error(err);
-			const errorMessage =
-				err.response?.data?.error ||
-				"Login failed. Check your credentials.";
-			toast.error(errorMessage);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	const {
+		phone,
+		setPhone,
+		password,
+		setPassword,
+		showPassword,
+		setShowPassword,
+		isLoading,
+		handleLogin,
+	} = useRiderLoginHandler();
 
 	return (
 		<form onSubmit={handleLogin} className="flex flex-col gap-5">

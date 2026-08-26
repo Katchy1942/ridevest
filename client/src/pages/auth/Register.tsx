@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { toast } from "sonner";
 import { ImageUpload } from "../../components/ui/ImageUpload";
-import api from "@/lib/axios";
 import {
 	Loader2,
 	Bike,
@@ -12,209 +10,72 @@ import {
 	X,
 	ArrowRight,
 } from "lucide-react";
-import { validatePassword } from "@/utils/validators";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Car02Icon, TruckIcon } from "@hugeicons/core-free-icons";
-import {
-	Combobox,
-	ComboboxInput,
-	ComboboxContent,
-	ComboboxList,
-	ComboboxItem,
-} from "../../components/ui/combobox";
 import { Link } from "react-router-dom";
 import RiderRegister from "./RiderRegister";
-
-const nigerianStates = [
-	"Abia",
-	"Adamawa",
-	"Akwa Ibom",
-	"Anambra",
-	"Bauchi",
-	"Bayelsa",
-	"Benue",
-	"Borno",
-	"Cross River",
-	"Delta",
-	"Ebonyi",
-	"Edo",
-	"Ekiti",
-	"Enugu",
-	"Federal Capital Territory",
-	"Gombe",
-	"Imo",
-	"Jigawa",
-	"Kaduna",
-	"Kano",
-	"Katsina",
-	"Kebbi",
-	"Kogi",
-	"Kwara",
-	"Lagos",
-	"Nasarawa",
-	"Niger",
-	"Ogun",
-	"Ondo",
-	"Osun",
-	"Oyo",
-	"Plateau",
-	"Rivers",
-	"Sokoto",
-	"Taraba",
-	"Yobe",
-	"Zamfara",
-];
+import { nigerianStates } from "@/assets/static_data/static";
+import { useCompanyRegisterHandler } from "@/handlers/authHandlers";
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const Register = () => {
-	const [formData, setFormData] = useState({
-		companyName: "",
-		whatsappNumber: "",
-		mobileNumber: "",
-		email: "",
-		address: "",
-		state: "",
-		availableDays: [] as string[],
-		timeFrom: "",
-		timeTo: "",
-		averageDeliveryPrice: "",
-		supportedModes: [] as string[],
-		password: "",
-		confirmPassword: "",
-	});
-	const [logo, setLogo] = useState<File | null>(null);
-	const [isLoading, setIsLoading] = useState(false);
-	const [showPassword, setShowPassword] = useState(false);
-	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [activeTab, setActiveTab] = useState<"company" | "rider">("company");
-
-	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-	) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
-	};
-
-	const toggleMode = (mode: string) => {
-		setFormData((prev) => ({
-			...prev,
-			supportedModes: prev.supportedModes.includes(mode)
-				? prev.supportedModes.filter((m) => m !== mode)
-				: [...prev.supportedModes, mode],
-		}));
-	};
-
-	const toggleDay = (day: string) => {
-		setFormData((prev) => ({
-			...prev,
-			availableDays: prev.availableDays.includes(day)
-				? prev.availableDays.filter((d) => d !== day)
-				: [...prev.availableDays, day],
-		}));
-	};
-
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-
-		if (!formData.companyName.trim())
-			return toast.error("Company name is required");
-		if (!formData.whatsappNumber.trim())
-			return toast.error("WhatsApp number is required");
-		if (!formData.mobileNumber.trim())
-			return toast.error("Mobile number is required");
-		if (!formData.email.trim())
-			return toast.error("Email address is required");
-		if (!formData.state) return toast.error("Please select a state");
-		if (!formData.address.trim())
-			return toast.error("Company address is required");
-		if (formData.availableDays.length === 0)
-			return toast.error("Please select at least one operating day");
-		if (!formData.timeFrom) return toast.error("Opening time is required");
-		if (!formData.timeTo) return toast.error("Closing time is required");
-		if (!formData.averageDeliveryPrice)
-			return toast.error("Average delivery price is required");
-		if (formData.supportedModes.length === 0)
-			return toast.error("Please select at least one transport mode");
-		if (!logo) return toast.error("A company logo is required");
-
-		const pwdValidation = validatePassword(formData.password);
-		if (!pwdValidation.isValid) return toast.error(pwdValidation.message);
-
-		if (formData.password !== formData.confirmPassword) {
-			return toast.error("Passwords do not match");
-		}
-
-		setIsLoading(true);
-
-		try {
-			const submitData = new FormData();
-
-			Object.entries(formData).forEach(([key, value]) => {
-				if (Array.isArray(value)) {
-					value.forEach((item) => submitData.append(key, item));
-				} else {
-					submitData.append(key, value as string);
-				}
-			});
-
-			submitData.append("logo", logo);
-
-			const logData: any = {};
-			submitData.forEach((value, key) => {
-				if (logData[key]) {
-					if (!Array.isArray(logData[key])) logData[key] = [logData[key]];
-					logData[key].push(value);
-				} else {
-					logData[key] = value;
-				}
-			});
-			console.log(logData);
-
-			const response = await api.post("/companies/register", submitData);
-
-			toast.success(response.data.message || "Registration successful!");
-
-			setTimeout(() => {
-				window.location.href = "/login";
-			}, 1500);
-		} catch (error: any) {
-			console.error(error);
-			const errorMsg =
-				error.response?.data?.error || "Failed to register company";
-			toast.error(errorMsg);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	const {
+		formData,
+		setLogo,
+		isLoading,
+		showPassword,
+		setShowPassword,
+		showConfirmPassword,
+		setShowConfirmPassword,
+		handleChange,
+		toggleMode,
+		toggleDay,
+		handleSubmit,
+	} = useCompanyRegisterHandler();
 
 	return (
-		<div className="min-h-screen flex flex-col justify-center items-center md:p-10 p-4">
-			<div className="bg-zinc-900 p-6 rounded-2xl border-5 border-zinc-800 w-full max-w-md md:max-w-xl">
-				<h2 className="text-xl font-semibold tracking-tighter mb-6 flex justify-center text-zinc-100">
-					Create an account.
+		<div
+			className="min-h-screen flex flex-col
+				justify-center items-center md:p-10 p-4"
+		>
+			<div
+				className="bg-zinc-900 p-6 rounded-2xl
+					border-5 border-zinc-800 w-full
+					max-w-md md:max-w-xl"
+			>
+				<h2
+					className="text-xl font-semibold tracking-tighter
+						mb-6 flex justify-center text-zinc-100"
+				>
+					Create an account
 				</h2>
 
 				<div className="flex items-center bg-zinc-800 rounded-full p-1 mb-6">
 					<button
 						type="button"
 						onClick={() => setActiveTab("company")}
-						className={`flex-1 py-1.5 text-sm font-medium rounded-full transition-all tracking-tight cursor-pointer ${
-							activeTab === "company"
-								? "bg-zinc-900 text-zinc-100 shadow-sm"
-								: "text-zinc-400 hover:text-zinc-300"
-						}`}
+						className={`flex-1 py-1.5 text-sm
+							font-medium rounded-full transition-all
+							tracking-tight cursor-pointer ${
+								activeTab === "company"
+									? "bg-zinc-900 text-zinc-100 shadow-sm"
+									: "text-zinc-400 hover:text-zinc-300"
+							}`}
 					>
 						Company
 					</button>
 					<button
 						type="button"
 						onClick={() => setActiveTab("rider")}
-						className={`flex-1 py-1.5 text-sm font-medium rounded-full transition-all tracking-tight cursor-pointer ${
-							activeTab === "rider"
-								? "bg-zinc-900 text-zinc-100 shadow-sm"
-								: "text-zinc-400 hover:text-zinc-300"
-						}`}
+						className={`flex-1 py-1.5 text-sm
+							font-medium rounded-full transition-all
+							tracking-tight cursor-pointer ${
+								activeTab === "rider"
+									? "bg-zinc-900 text-zinc-100 shadow-sm"
+									: "text-zinc-400 hover:text-zinc-300"
+							}`}
 					>
 						Rider
 					</button>
@@ -240,7 +101,11 @@ const Register = () => {
 									onChange={handleChange}
 									required
 									disabled={isLoading}
-									className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors"
+									className="w-full px-4 py-1.5 text-sm
+										bg-zinc-900 border border-zinc-700
+										rounded-md shadow-sm focus:border
+										focus:outline-none focus:border-emerald-500
+										text-zinc-100 placeholder-zinc-500 transition-colors"
 									placeholder="GIRA Logistics Ltd"
 								/>
 							</div>
@@ -256,7 +121,11 @@ const Register = () => {
 									onChange={handleChange}
 									required
 									disabled={isLoading}
-									className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors"
+									className="w-full px-4 py-1.5 text-sm
+										bg-zinc-900 border border-zinc-700
+										rounded-md shadow-sm focus:border
+										focus:outline-none focus:border-emerald-500
+										text-zinc-100 placeholder-zinc-500 transition-colors"
 									placeholder="+1 234 567 8900"
 								/>
 							</div>
@@ -272,7 +141,11 @@ const Register = () => {
 									onChange={handleChange}
 									required
 									disabled={isLoading}
-									className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors"
+									className="w-full px-4 py-1.5 text-sm
+										bg-zinc-900 border border-zinc-700
+										rounded-md shadow-sm focus:border
+										focus:outline-none focus:border-emerald-500
+										text-zinc-100 placeholder-zinc-500 transition-colors"
 									placeholder="+1 234 567 8900"
 								/>
 							</div>
@@ -288,7 +161,11 @@ const Register = () => {
 									onChange={handleChange}
 									required
 									disabled={isLoading}
-									className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors"
+									className="w-full px-4 py-1.5 text-sm
+										bg-zinc-900 border border-zinc-700
+										rounded-md shadow-sm focus:border
+										focus:outline-none focus:border-emerald-500
+										text-zinc-100 placeholder-zinc-500 transition-colors"
 									placeholder="contact@company.com"
 								/>
 							</div>
@@ -297,31 +174,31 @@ const Register = () => {
 								<label className="block text-sm font-medium text-zinc-300 mb-2">
 									State / Region
 								</label>
-								<Combobox
+								<select
+									name="state"
 									value={formData.state}
-									onValueChange={(val: string | null) =>
-										val &&
-										setFormData((prev) => ({ ...prev, state: val }))
+									onChange={(e) =>
+										handleChange(
+											e as unknown as React.ChangeEvent<HTMLInputElement>,
+										)
 									}
+									required
+									disabled={isLoading}
+									className="w-full px-4 py-1.5 text-sm
+										bg-zinc-900 border border-zinc-700
+										rounded-md shadow-sm focus:border
+										focus:outline-none focus:border-emerald-500
+										text-zinc-100 transition-colors cursor-pointer"
 								>
-									<ComboboxInput
-										placeholder="Select a Nigerian state"
-										className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors"
-									/>
-									<ComboboxContent className="bg-zinc-900 border-zinc-800 text-zinc-200">
-										<ComboboxList>
-											{nigerianStates.map((state) => (
-												<ComboboxItem
-													key={state}
-													value={state}
-													className="flex justify-between w-full hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer"
-												>
-													<span>{state}</span>
-												</ComboboxItem>
-											))}
-										</ComboboxList>
-									</ComboboxContent>
-								</Combobox>
+									<option value="" disabled>
+										Select a Nigerian state
+									</option>
+									{nigerianStates.map((state) => (
+										<option key={state} value={state}>
+											{state}
+										</option>
+									))}
+								</select>
 							</div>
 
 							<div>
@@ -329,7 +206,11 @@ const Register = () => {
 									Price Per Delivery
 								</label>
 								<input
-									className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors"
+									className="w-full px-4 py-1.5 text-sm
+										bg-zinc-900 border border-zinc-700
+										rounded-md shadow-sm focus:border
+										focus:outline-none focus:border-emerald-500
+										text-zinc-100 placeholder-zinc-500 transition-colors"
 									type="number"
 									name="averageDeliveryPrice"
 									value={formData.averageDeliveryPrice}
@@ -351,7 +232,11 @@ const Register = () => {
 									required
 									disabled={isLoading}
 									rows={2}
-									className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors"
+									className="w-full px-4 py-1.5 text-sm
+										bg-zinc-900 border border-zinc-700
+										rounded-md shadow-sm focus:border
+										focus:outline-none focus:border-emerald-500
+										text-zinc-100 placeholder-zinc-500 transition-colors"
 									placeholder="123 Logistics Way..."
 								/>
 							</div>
@@ -360,17 +245,18 @@ const Register = () => {
 								<label className="text-sm font-medium text-zinc-300">
 									Operating Hours & Days
 								</label>
-								<div className="space-y-4 p-5 mt-2 border border-zinc-700 rounded-lg bg-zinc-900/50 shadow-sm">
+								<div className="space-y-4 p-5 mt-2 border border-zinc-700 rounded-lg">
 									<div className="flex flex-wrap gap-2">
 										{daysOfWeek.map((day) => (
 											<div
 												key={day}
 												onClick={() => toggleDay(day)}
-												className={`px-3 py-1.5 rounded-full text-xs font-medium cursor-pointer transition-colors select-none ${
-													formData.availableDays.includes(day)
-														? "bg-emerald-600/90 text-white shadow-sm"
-														: "bg-zinc-800 text-zinc-400 border border-zinc-700/50 hover:bg-zinc-700 hover:text-zinc-200"
-												}`}
+												className={`px-3 py-1.5 rounded-full text-xs
+													font-medium cursor-pointer transition-colors select-none ${
+														formData.availableDays.includes(day)
+															? "bg-emerald-600/90 text-white shadow-sm"
+															: "bg-zinc-800 text-zinc-400 border border-zinc-700/50 hover:bg-zinc-700 hover:text-zinc-200"
+													}`}
 											>
 												{day}
 											</div>
@@ -387,7 +273,10 @@ const Register = () => {
 												name="timeFrom"
 												value={formData.timeFrom}
 												onChange={handleChange}
-												className="w-full px-3 py-1.5 text-sm bg-zinc-800 border border-zinc-700 rounded-md shadow-sm focus:border-emerald-500 focus:outline-none text-zinc-100 placeholder-zinc-500"
+												className="w-full px-3 py-1.5 text-sm
+													bg-zinc-800 border border-zinc-700
+													rounded-md shadow-sm focus:border-emerald-500
+													focus:outline-none text-zinc-100 placeholder-zinc-500"
 											/>
 										</div>
 										<div className="space-y-1.5">
@@ -399,7 +288,10 @@ const Register = () => {
 												name="timeTo"
 												value={formData.timeTo}
 												onChange={handleChange}
-												className="w-full px-3 py-1.5 text-sm bg-zinc-800 border border-zinc-700 rounded-md shadow-sm focus:border-emerald-500 focus:outline-none text-zinc-100 placeholder-zinc-500"
+												className="w-full px-3 py-1.5 text-sm
+													bg-zinc-800 border border-zinc-700
+													rounded-md shadow-sm focus:border-emerald-500
+													focus:outline-none text-zinc-100 placeholder-zinc-500"
 											/>
 										</div>
 									</div>
@@ -431,11 +323,13 @@ const Register = () => {
 											<div
 												key={id}
 												onClick={() => toggleMode(id)}
-												className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all cursor-pointer select-none ${
-													formData.supportedModes.includes(id)
-														? "bg-emerald-900/20 border-emerald-500 text-emerald-400 shadow-sm"
-														: "bg-zinc-900 border-zinc-700 text-zinc-400 hover:bg-zinc-800"
-												}`}
+												className={`flex flex-col items-center
+													justify-center p-3 rounded-lg
+													border transition-all cursor-pointer select-none ${
+														formData.supportedModes.includes(id)
+															? "bg-emerald-900/20 border-emerald-500 text-emerald-400 shadow-sm"
+															: "bg-zinc-900 border-zinc-700 text-zinc-400 hover:bg-zinc-800"
+													}`}
 											>
 												{isHuge ? (
 													<HugeiconsIcon
@@ -470,7 +364,10 @@ const Register = () => {
 								/>
 							</div>
 
-							<div className="md:col-span-2 pt-5 border-t border-zinc-800/80 mt-2">
+							<div
+								className="md:col-span-2 pt-5 border-t
+									border-zinc-800/80 mt-2"
+							>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 									<div>
 										<label className="block text-sm font-medium text-zinc-300 mb-2">
@@ -483,7 +380,11 @@ const Register = () => {
 												value={formData.password}
 												onChange={handleChange}
 												disabled={isLoading}
-												className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors pr-10"
+												className="w-full px-4 py-1.5 text-sm
+													bg-zinc-900 border border-zinc-700
+													rounded-md shadow-sm focus:border
+													focus:outline-none focus:border-emerald-500
+													text-zinc-100 placeholder-zinc-500 transition-colors pr-10"
 												placeholder="••••••••"
 											/>
 											<button
@@ -491,7 +392,9 @@ const Register = () => {
 												onClick={() =>
 													setShowPassword(!showPassword)
 												}
-												className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
+												className="absolute right-3 top-1/2
+													-translate-y-1/2 text-zinc-400
+													hover:text-zinc-300 transition-colors"
 											>
 												{showPassword ? (
 													<EyeOff size={16} strokeWidth={1.5} />
@@ -515,7 +418,11 @@ const Register = () => {
 												value={formData.confirmPassword}
 												onChange={handleChange}
 												disabled={isLoading}
-												className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors pr-10"
+												className="w-full px-4 py-1.5 text-sm
+													bg-zinc-900 border border-zinc-700
+													rounded-md shadow-sm focus:border
+													focus:outline-none focus:border-emerald-500
+													text-zinc-100 placeholder-zinc-500 transition-colors pr-10"
 												placeholder="••••••••"
 											/>
 											<button
@@ -525,7 +432,9 @@ const Register = () => {
 														!showConfirmPassword,
 													)
 												}
-												className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
+												className="absolute right-3 top-1/2
+													-translate-y-1/2 text-zinc-400
+													hover:text-zinc-300 transition-colors"
 											>
 												{showConfirmPassword ? (
 													<EyeOff size={16} strokeWidth={1.5} />
@@ -536,16 +445,19 @@ const Register = () => {
 										</div>
 									</div>
 
-									{/* Real-time Password Validation UI */}
 									{(formData.password.length > 0 ||
 										formData.confirmPassword.length > 0) && (
-										<div className="md:col-span-2 bg-zinc-900/80 p-4 rounded-lg border border-zinc-800 text-xs mt-1">
+										<div
+											className="md:col-span-2 bg-zinc-900/80 p-4
+												rounded-lg border border-zinc-800 text-xs mt-1"
+										>
 											<p className="font-medium text-zinc-300 mb-3 border-b border-zinc-800 pb-2">
 												Password Requirements
 											</p>
 											<div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
 												<div
-													className={`flex items-center gap-2 transition-colors ${formData.password.length >= 6 ? "text-emerald-500" : "text-zinc-500"}`}
+													className={`flex items-center gap-2
+														transition-colors ${formData.password.length >= 6 ? "text-emerald-500" : "text-zinc-500"}`}
 												>
 													{formData.password.length >= 6 ? (
 														<Check size={14} />
@@ -555,7 +467,8 @@ const Register = () => {
 													<span>At least 6 characters long</span>
 												</div>
 												<div
-													className={`flex items-center gap-2 transition-colors ${/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/.test(formData.password) ? "text-emerald-500" : "text-zinc-500"}`}
+													className={`flex items-center gap-2
+														transition-colors ${/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/.test(formData.password) ? "text-emerald-500" : "text-zinc-500"}`}
 												>
 													{/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/.test(
 														formData.password,
@@ -569,7 +482,8 @@ const Register = () => {
 													</span>
 												</div>
 												<div
-													className={`flex items-center gap-2 transition-colors ${formData.password.length > 0 && formData.password === formData.confirmPassword ? "text-emerald-500" : "text-zinc-500"}`}
+													className={`flex items-center gap-2
+														transition-colors ${formData.password.length > 0 && formData.password === formData.confirmPassword ? "text-emerald-500" : "text-zinc-500"}`}
 												>
 													{formData.password.length > 0 &&
 													formData.password ===
@@ -590,7 +504,12 @@ const Register = () => {
 						<button
 							type="submit"
 							disabled={isLoading}
-							className="w-full py-2 px-4 mt-4 bg-emerald-600 hover:bg-emerald-500 text-black text-sm tracking-tight font-medium rounded-full shadow-sm transition-colors disabled:opacity-50 cursor-pointer flex justify-center items-center"
+							className="w-full py-2 px-4 mt-4
+								bg-emerald-600 hover:bg-emerald-500
+								text-black text-sm tracking-tight
+								font-medium rounded-full shadow-sm
+								transition-colors disabled:opacity-50
+								cursor-pointer flex justify-center items-center"
 						>
 							{isLoading ? (
 								<>
@@ -610,7 +529,8 @@ const Register = () => {
 					Already have an account?{" "}
 					<Link
 						to="/login"
-						className="font-medium text-emerald-600 hover:text-emerald-500 transition-colors"
+						className="font-medium text-emerald-600
+							hover:text-emerald-500 transition-colors"
 					>
 						Sign in
 					</Link>

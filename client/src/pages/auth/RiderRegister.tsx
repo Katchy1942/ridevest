@@ -1,91 +1,21 @@
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
 import { Loader2, ArrowRight, Eye, EyeOff, Check, X } from "lucide-react";
 import { ImageUpload } from "../../components/ui/ImageUpload";
-import api from "@/lib/axios";
+import { useRiderRegisterHandler } from "@/handlers/authHandlers";
 
 const RiderRegister = () => {
-	const [formData, setFormData] = useState({
-		fullName: "",
-		phone: "",
-		whatsappNumber: "",
-		trackerId: "",
-		password: "",
-		confirmPassword: "",
-		companyId: "",
-	});
-	const [companies, setCompanies] = useState<{ id: number; companyName: string }[]>([]);
-	const [loadingCompanies, setLoadingCompanies] = useState(false);
-	const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
-	const [isLoading, setIsLoading] = useState(false);
-	const [showPassword, setShowPassword] = useState(false);
-	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-	useEffect(() => {
-		const fetchCompanies = async () => {
-			setLoadingCompanies(true);
-			try {
-				const response = await api.get("/companies/all");
-				setCompanies(response.data.companies || []);
-			} catch (error) {
-				console.error("Error fetching companies:", error);
-				toast.error("Failed to load companies");
-			} finally {
-				setLoadingCompanies(false);
-			}
-		};
-		fetchCompanies();
-	}, []);
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
-	};
-
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		if (!formData.companyId)
-			return toast.error("Please select a company to join");
-		if (!formData.fullName.trim())
-			return toast.error("Full name is required");
-		if (!formData.phone.trim())
-			return toast.error("Phone number is required");
-		if (!formData.whatsappNumber.trim())
-			return toast.error("WhatsApp number is required");
-		if (!formData.trackerId.trim())
-			return toast.error("Tracker ID is required");
-		if (!formData.password)
-			return toast.error("Password is required");
-		if (formData.password !== formData.confirmPassword)
-			return toast.error("Passwords do not match");
-		if (!profilePhoto)
-			return toast.error("A profile photo is required");
-
-		setIsLoading(true);
-		try {
-			const submitData = new FormData();
-			submitData.append("companyId", formData.companyId);
-			submitData.append("fullName", formData.fullName);
-			submitData.append("phone", formData.phone);
-			submitData.append("whatsappNumber", formData.whatsappNumber);
-			submitData.append("trackerId", formData.trackerId);
-			submitData.append("password", formData.password);
-			submitData.append("profilePhoto", profilePhoto);
-
-			const response = await api.post("/riders/register", submitData);
-			toast.success(response.data.message || "Registration successful!");
-			setTimeout(() => {
-				window.location.href = "/login";
-			}, 1500);
-		} catch (error: any) {
-			console.error(error);
-			const errorMsg =
-				error.response?.data?.error || "Failed to register rider";
-			toast.error(errorMsg);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	const {
+		formData,
+		companies,
+		loadingCompanies,
+		setProfilePhoto,
+		isLoading,
+		showPassword,
+		setShowPassword,
+		showConfirmPassword,
+		setShowConfirmPassword,
+		handleChange,
+		handleSubmit,
+	} = useRiderRegisterHandler();
 	return (
 		<form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
 			{/* Profile Photo */}
@@ -113,7 +43,9 @@ const RiderRegister = () => {
 					className="w-full px-4 py-2 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors disabled:opacity-50 cursor-pointer"
 				>
 					<option value="">
-						{loadingCompanies ? "Loading companies..." : "-- Select an existing company --"}
+						{loadingCompanies
+							? "Loading companies..."
+							: "-- Select an existing company --"}
 					</option>
 					{companies.map((company) => (
 						<option key={company.id} value={company.id}>
@@ -249,7 +181,8 @@ const RiderRegister = () => {
 			</div>
 
 			{/* Real-time Password Validation UI */}
-			{(formData.password.length > 0 || formData.confirmPassword.length > 0) && (
+			{(formData.password.length > 0 ||
+				formData.confirmPassword.length > 0) && (
 				<div className="bg-zinc-900/80 p-4 rounded-lg border border-zinc-800 text-xs mt-1">
 					<p className="font-medium text-zinc-300 mb-3 border-b border-zinc-800 pb-2">
 						Password Requirements
@@ -268,7 +201,9 @@ const RiderRegister = () => {
 						<div
 							className={`flex items-center gap-2 transition-colors ${/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/.test(formData.password) ? "text-emerald-500" : "text-zinc-500"}`}
 						>
-							{/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/.test(formData.password) ? (
+							{/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/.test(
+								formData.password,
+							) ? (
 								<Check size={14} />
 							) : (
 								<X size={14} />
@@ -278,7 +213,8 @@ const RiderRegister = () => {
 						<div
 							className={`flex items-center gap-2 transition-colors ${formData.password.length > 0 && formData.password === formData.confirmPassword ? "text-emerald-500" : "text-zinc-500"}`}
 						>
-							{formData.password.length > 0 && formData.password === formData.confirmPassword ? (
+							{formData.password.length > 0 &&
+							formData.password === formData.confirmPassword ? (
 								<Check size={14} />
 							) : (
 								<X size={14} />

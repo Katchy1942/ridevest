@@ -33,13 +33,13 @@ const HeroSection = () => {
 					className="text-5xl font- leading-[1.08] 
 						tracking-tighter text-white mb-5"
 				>
-					<span className="text-white/40">Every delivery,</span> Always
+					<span className="text-white/45">Every delivery,</span> Always
 					tracked
 				</h1>
 
 				<p
-					className="text-sm text-white/45 max-w-lg 
-						leading-[1.2] mb-10 font-light"
+					className="text-md text-white/45 max-w-lg 
+						leading-[1.4] mb-10"
 				>
 					Ridevest gives logistics teams full dispatch control and
 					real-time visibility, from the first mile to the last.
@@ -51,7 +51,7 @@ const HeroSection = () => {
 						className="group relative inline-flex items-center 
 							gap-1.5 overflow-hidden rounded-full border
 							bg-emerald-600 px-5 py-2.5 text-sm tracking-tight 
-							font-medium text-black transition-all duration-300 
+							text-black transition-all duration-300 
 							hover:bg-transparent hover:border-emerald-600
 							border-emerald-600 hover:text-emerald-600"
 					>
@@ -63,6 +63,31 @@ const HeroSection = () => {
 								group-hover:-translate-y-px"
 						/>
 					</Link>
+				</div>
+
+				<div
+					className="mt-10 border border-gray-500 
+						p-4 flex flex-col items-center gap-3
+						rounded-sm"
+				>
+					<div className="flex flex-wrap justify-center gap-4">
+						{[
+							"/Real-time GPS",
+							"/Rider dispatch",
+							"/Proof of delivery",
+							"/SMS notifications",
+							"/Live ETA",
+						].map((pill) => (
+							<span
+								key={pill}
+								className="inline-flex items-center
+									text-xs text-white/50 tracking-tight
+									font-light"
+							>
+								{pill}
+							</span>
+						))}
+					</div>
 				</div>
 			</div>
 		</section>

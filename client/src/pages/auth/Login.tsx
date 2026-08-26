@@ -1,45 +1,21 @@
 import { useState } from "react";
 import { Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
-import { Link, useNavigate } from "react-router-dom";
-import api from "@/lib/axios";
+import { Link } from "react-router-dom";
 import RiderLogin from "./RiderLogin";
+import { useCompanyLoginHandler } from "@/handlers/authHandlers";
 
 const Login = () => {
-	const navigate = useNavigate();
 	const [activeTab, setActiveTab] = useState<"company" | "rider">("company");
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [showPassword, setShowPassword] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-
-	const handleLogin = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setIsLoading(true);
-
-		try {
-			const response = await api.post("/auth/login", { email, password });
-
-			const { token, company } = response.data;
-
-			// Store token and company data
-			localStorage.setItem("token", token);
-			localStorage.setItem("company", JSON.stringify(company));
-			localStorage.setItem("userRole", "company");
-
-			toast.success("Successfully logged in!");
-			setTimeout(() => {
-				navigate("/dashboard/riders");
-			}, 1000);
-		} catch (err: any) {
-			const errorMessage =
-				err.response?.data?.error ||
-				"Login failed. Check your credentials.";
-			toast.error(errorMessage);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	const {
+		email,
+		setEmail,
+		password,
+		setPassword,
+		showPassword,
+		setShowPassword,
+		isLoading,
+		handleLogin,
+	} = useCompanyLoginHandler();
 
 	return (
 		<div className="min-h-screen flex items-center justify-center p-4 md:p-10">
