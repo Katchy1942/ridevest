@@ -128,7 +128,21 @@
 
 body {
 	background-color: #111111;
+	/* Extend content into safe areas (behind system bars) */
+	padding-top: env(safe-area-inset-top);
+	padding-bottom: env(safe-area-inset-bottom);
+	padding-left: env(safe-area-inset-left);
+	padding-right: env(safe-area-inset-right);
 }
+
+/* Utility classes for safe-area-aware spacing */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.mb-safe { margin-bottom: env(safe-area-inset-bottom); }
+.mt-safe { margin-top: env(safe-area-inset-top); }
+
+/* Bottom nav / fixed footer helper */
+.bottom-safe { bottom: env(safe-area-inset-bottom); }
 
 .hide-scrollbar {
   -ms-overflow-style: none;
