@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import LiveLocation from "./LiveLocation";
+import trackingImg from "../../assets/images/tracking-img.png";
+import riderCutout from "../../assets/images/rider-cutout.png";
 
 const timelineLogs = [
 	{
@@ -45,8 +47,7 @@ const TrackDelivery = () => {
 						bg-center flex flex-col items-center 
 						justify-center rounded-lg"
 						style={{
-							backgroundImage:
-								"url('/src/assets/images/tracking-img.png')",
+							backgroundImage: `url(${trackingImg})`,
 						}}
 					>
 						<div className="absolute inset-0 bg-black/50" />
@@ -84,7 +85,7 @@ const TrackDelivery = () => {
 						>
 							<div className="shrink-0 self-end">
 								<img
-									src="/src/assets/images/rider-cutout.png"
+									src={riderCutout}
 									alt="Rider"
 									className="h-28 w-auto object-contain block"
 								/>
