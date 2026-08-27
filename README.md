@@ -93,5 +93,3 @@ methods.
 1. Ridevest reduces delivery uncertainty and helps businesses:
      - Lower failed delivery rates
      - Improve customer trust
-
-> Still in development.
