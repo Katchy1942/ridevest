@@ -1,3 +1,2 @@
-.vscode/*
-.agents/*
-!.vscode/extensions.json
+.vscode
+.agents
