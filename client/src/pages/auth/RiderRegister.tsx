@@ -17,7 +17,7 @@ const RiderRegister = () => {
 		handleSubmit,
 	} = useRiderRegisterHandler();
 	return (
-		<form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
+		<form className="flex flex-col gap-5" onSubmit={handleSubmit}>
 			{/* Profile Photo */}
 			<div>
 				<label className="block text-sm font-medium text-zinc-300 mb-2">
@@ -40,6 +40,7 @@ const RiderRegister = () => {
 					value={formData.companyId}
 					onChange={handleChange}
 					disabled={isLoading || loadingCompanies}
+					required
 					className="w-full px-4 py-2 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors disabled:opacity-50 cursor-pointer"
 				>
 					<option value="">
@@ -70,6 +71,7 @@ const RiderRegister = () => {
 					onChange={handleChange}
 					placeholder="John Doe"
 					disabled={isLoading}
+					required
 					className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors disabled:opacity-50"
 				/>
 			</div>
@@ -86,6 +88,7 @@ const RiderRegister = () => {
 						onChange={handleChange}
 						placeholder="070 0000 0000"
 						disabled={isLoading}
+						required
 						className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors disabled:opacity-50"
 					/>
 				</div>
@@ -100,6 +103,7 @@ const RiderRegister = () => {
 						onChange={handleChange}
 						placeholder="070 0000 0000"
 						disabled={isLoading}
+						required
 						className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors disabled:opacity-50"
 					/>
 				</div>
@@ -116,6 +120,7 @@ const RiderRegister = () => {
 					onChange={handleChange}
 					placeholder="Provided by your company"
 					disabled={isLoading}
+					required
 					className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors disabled:opacity-50"
 				/>
 				<p className="text-xs text-zinc-500 mt-1.5">
@@ -135,6 +140,7 @@ const RiderRegister = () => {
 						onChange={handleChange}
 						placeholder="••••••••"
 						disabled={isLoading}
+						required
 						className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors disabled:opacity-50 pr-10"
 					/>
 					<button
@@ -164,6 +170,7 @@ const RiderRegister = () => {
 						onChange={handleChange}
 						placeholder="••••••••"
 						disabled={isLoading}
+						required
 						className="w-full px-4 py-1.5 text-sm bg-zinc-900 border border-zinc-700 rounded-md shadow-sm focus:border focus:outline-none focus:border-emerald-500 text-zinc-100 placeholder-zinc-500 transition-colors disabled:opacity-50 pr-10"
 					/>
 					<button

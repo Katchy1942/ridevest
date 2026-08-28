@@ -6,7 +6,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
 	(config: any) => {
-		const token = localStorage.getItem("token");
+		const token = localStorage.getItem("ridevest_token");
 
 		if (token && config.headers) {
 			config.headers.Authorization = `Bearer ${token}`;
@@ -27,10 +27,9 @@ api.interceptors.response.use(
 			error.config?.url?.includes("/register");
 
 		if (error.response?.status === 401 && !isAuthRoute) {
-			localStorage.removeItem("token");
-			localStorage.removeItem("company");
-			localStorage.removeItem("rider");
-			localStorage.removeItem("userRole");
+			localStorage.removeItem("ridevest_token");
+			localStorage.removeItem("ridevest_userRole");
+			localStorage.removeItem("ridevest_user");
 			if (window.location.pathname !== "/login") {
 				window.location.href = "/login";
 			}

@@ -3,95 +3,73 @@ import jwt from "jsonwebtoken";
 import models from "../../core/models.index.js";
 
 export const loginCompany = async (req, res) => {
-	try {
-		const { email, password } = req.body;
+	const { email, password } = req.body;
 
-		if (!email || !password) {
-			return res
-				.status(400)
-				.json({ error: "Email and password are required" });
-		}
-
-		const company = await models.Company.findOne({ where: { email } });
-		if (!company) {
-			return res.status(401).json({ error: "Invalid email or password" });
-		}
-
-		const isMatch = await bcrypt.compare(password, company.password);
-		if (!isMatch) {
-			return res.status(401).json({ error: "Invalid email or password" });
-		}
-
-		const secret = process.env.JWT_SECRET;
-
-		const token = jwt.sign({ id: company.id, email: company.email }, secret, {
-			expiresIn: "7d",
-		});
-
-		const companyData = company.toJSON();
-		delete companyData.password;
-
-		return res.status(200).json({
-			message: "Login successful",
-			token,
-			company: companyData,
-		});
-	} catch (error) {
-		console.error("Login Error:", error);
-		return res
-			.status(500)
-			.json({ error: "Internal Server Error during login" });
+	const company = await models.Company.findOne({ where: { email } });
+	if (!company) {
+		const err = new Error("Invalid email or password");
+		err.statusCode = 401;
+		throw err;
 	}
+
+	const isMatch = await bcrypt.compare(password, company.password);
+	if (!isMatch) {
+		const err = new Error("Invalid email or password");
+		err.statusCode = 401;
+		throw err;
+	}
+
+	const secret = process.env.JWT_SECRET;
+	if (!secret) throw new Error("CRITICAL: JWT_SECRET is not defined.");
+
+	const token = jwt.sign({ id: company.id, email: company.email }, secret, {
+		expiresIn: "7d",
+	});
+
+	const companyData = company.toJSON();
+	delete companyData.password;
+
+	return res.status(200).json({
+		message: "Login successful",
+		token,
+		company: companyData,
+	});
 };
 
 export const loginRider = async (req, res) => {
-	try {
-		const { phone, password } = req.body;
+	const { phone, password } = req.body;
 
-		if (!phone || !password) {
-			return res
-				.status(400)
-				.json({ error: "Mobile number and password are required" });
-		}
+	const rider = await models.Rider.findOne({ where: { phone } });
+	if (!rider) {
+		const err = new Error("Invalid mobile number or password");
+		err.statusCode = 401;
+		throw err;
+	}
 
-		const rider = await models.Rider.findOne({ where: { phone } });
-		if (!rider) {
-			return res.status(401).json({ error: "Invalid mobile number or password" });
-		}
+	const isMatch = await bcrypt.compare(password, rider.password);
+	if (!isMatch) {
+		const err = new Error("Invalid mobile number or password");
+		err.statusCode = 401;
+		throw err;
+	}
 
-		const isMatch = await bcrypt.compare(password, rider.password);
-		if (!isMatch) {
-			return res.status(401).json({ error: "Invalid mobile number or password" });
-		}
+	const secret = process.env.JWT_SECRET;
+	if (!secret) throw new Error("CRITICAL: JWT_SECRET is not defined.");
 
-		const secret = process.env.JWT_SECRET;
-		const token = jwt.sign({ id: rider.id, phone: rider.phone, role: 'rider' }, secret, {
+	const token = jwt.sign(
+		{ id: rider.id, phone: rider.phone, role: "rider" },
+		secret,
+		{
 			expiresIn: "7d",
-		});
+		},
+	);
 
-		const riderData = rider.toJSON();
-		delete riderData.password;
+	const riderData = rider.toJSON();
+	delete riderData.password;
 
-		return res.status(200).json({
-			message: "Login successful",
-			token,
-			rider: riderData,
-		});
-	} catch (error) {
-		console.error("Rider Login Error:", error);
-		return res
-			.status(500)
-			.json({ error: "Internal Server Error during rider login" });
-	}
-};
-
-export const logoutCompany = async (req, res) => {
-	try {
-		return res.status(200).json({ message: "Logout successful" });
-	} catch (error) {
-		console.error("Logout Error:", error);
-		return res
-			.status(500)
-			.json({ error: "Internal Server Error during logout" });
-	}
+	return res.status(200).json({
+		message: "Login successful",
+		token,
+		rider: riderData,
+	});
 };

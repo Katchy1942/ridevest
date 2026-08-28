@@ -37,13 +37,14 @@ const Register = () => {
 
 	return (
 		<div
-			className="min-h-screen flex flex-col
-				justify-center items-center md:p-10 p-4"
+			className="flex flex-col items-center justify-center
+				min-h-screen px-0 py-8 pt-24 md:p-10 md:pt-28"
 		>
 			<div
-				className="bg-zinc-900 p-6 rounded-2xl
-					border-5 border-zinc-800 w-full
-					max-w-md md:max-w-xl"
+				className="p-6 md:p-8
+					rounded-none md:rounded-2xl
+					border-0 md:border-5 border-zinc-800
+					w-full max-w-md md:max-w-xl"
 			>
 				<h2
 					className="text-xl font-semibold tracking-tighter
@@ -84,11 +85,7 @@ const Register = () => {
 				{activeTab === "rider" ? (
 					<RiderRegister />
 				) : (
-					<form
-						className="flex flex-col gap-5"
-						onSubmit={handleSubmit}
-						noValidate
-					>
+					<form className="flex flex-col gap-5" onSubmit={handleSubmit}>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 							<div className="md:col-span-2">
 								<label className="block text-sm font-medium text-zinc-300 mb-2">

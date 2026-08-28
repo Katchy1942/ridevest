@@ -1,4 +1,4 @@
-import { useNavigate, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
 	Home01Icon,
@@ -8,15 +8,23 @@ import {
 	Settings01Icon,
 } from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
-import api from "@/lib/axios";
+import { useAuth } from "../../context/AuthContext";
 
 interface SidebarProps {
 	isOpen?: boolean;
 	onClose?: () => void;
 }
 
+const navHeaderClass = `px-4 mb-3 text-xs
+	font-medium tracking-wider uppercase
+	text-zinc-500`;
+
+const navLinkBaseClass = `flex items-center gap-3
+	px-4 py-3 md:py-2 rounded-md
+	text-xs tracking-tight
+	transition-all duration-200`;
+
 const Sidebar = ({ isOpen = false, onClose = () => {} }: SidebarProps) => {
-	const navigate = useNavigate();
 	const menuItems = [
 		{ name: "Dashboard", path: "/dashboard", icon: Home01Icon },
 		{
@@ -31,24 +39,17 @@ const Sidebar = ({ isOpen = false, onClose = () => {} }: SidebarProps) => {
 		{ name: "Settings", path: "/dashboard/settings", icon: Settings01Icon },
 	];
 
+	const { logout } = useAuth();
+
 	const handleLogout = () => {
 		onClose();
 
 		toast("Are you sure you want to logout?", {
 			action: {
 				label: "Logout",
-				onClick: async () => {
-					try {
-						// Optional backend call
-						await api.post("/auth/logout");
-					} catch (error) {
-						console.error("Logout error:", error);
-					} finally {
-						localStorage.removeItem("token");
-						localStorage.removeItem("company");
-						navigate("/login");
-						toast.success("Successfully logged out");
-					}
+				onClick: () => {
+					logout();
+					toast.success("Successfully logged out");
 				},
 			},
 			cancel: {
@@ -61,38 +62,54 @@ const Sidebar = ({ isOpen = false, onClose = () => {} }: SidebarProps) => {
 	return (
 		<>
 			<div
-				className={`fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity duration-300 backdrop-blur-sm ${
-					isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-				}`}
+				className={`fixed inset-0 z-40 md:hidden
+					bg-black/60 backdrop-blur-sm
+					transition-opacity duration-300
+					${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
 				onClick={onClose}
 			/>
 
 			<aside
-				className={`
-            fixed z-50 bg-zinc-900 flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]
-            md:w-44 md:h-screen md:top-0 md:left-0 md:translate-y-0 md:rounded-none
-            w-full h-[85vh] bottom-0 left-0 border-t border-zinc-800 rounded-t-4xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-none
-            ${isOpen ? "translate-y-0" : "translate-y-full"}
-         `}
+				className={`fixed bottom-0 left-0 md:top-0
+					z-50 w-full h-[85vh] md:w-44 md:h-screen
+					flex flex-col
+					bg-zinc-900 border-t border-zinc-800
+					rounded-t-4xl md:rounded-none
+					shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-none
+					transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]
+					md:translate-y-0
+					${isOpen ? "translate-y-0" : "translate-y-full"}`}
 			>
-				<div className="w-full flex justify-center pt-4 pb-2 md:hidden">
-					<div className="w-12 h-1.5 bg-zinc-700/50 rounded-full" />
+				<div
+					className="flex justify-center w-full
+						pt-4 pb-2 md:hidden"
+				>
+					<div
+						className="w-12 h-1.5 rounded-full
+							bg-zinc-700/50"
+					/>
 				</div>
 
-				<div className="px-6 pb-2 pt-2 md:pt-6 hidden md:block">
+				<div
+					className="hidden md:block px-6
+						pt-2 pb-2 md:pt-6"
+				>
 					<h1
-						className="text-xl tracking-tighter 
-					font-medium text-emerald-600 shrink-0"
+						className="shrink-0 text-xl
+							font-medium tracking-tighter
+							text-emerald-600"
 					>
 						ridevest
 					</h1>
 				</div>
 
-				<nav className="flex-1 px-4 py-6 md:py-8 space-y-6 overflow-y-auto w-full">
+				<nav
+					className="flex-1 w-full overflow-y-auto
+						px-4 py-6 md:py-8
+						space-y-6"
+				>
 					<div className="space-y-1">
-						<div className="px-4 text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">
-							Menu
-						</div>
+						<div className={navHeaderClass}>Menu</div>
 						{menuItems.map((item) => (
 							<NavLink
 								key={item.name}
@@ -100,11 +117,8 @@ const Sidebar = ({ isOpen = false, onClose = () => {} }: SidebarProps) => {
 								end={item.path === "/dashboard"}
 								onClick={() => onClose()}
 								className={({ isActive }) =>
-									`flex items-center text-xs tracking-tight gap-3 px-4 py-3 md:py-2 rounded-md transition-all duration-200 ${
-										isActive
-											? "bg-emerald-900/20 text-emerald-400 font-medium"
-											: "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
-									}`
+									`${navLinkBaseClass}
+										${isActive ? "bg-emerald-900/20 text-emerald-400 font-medium" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"}`
 								}
 							>
 								<HugeiconsIcon
@@ -118,20 +132,15 @@ const Sidebar = ({ isOpen = false, onClose = () => {} }: SidebarProps) => {
 					</div>
 
 					<div className="space-y-1">
-						<div className="px-4 text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">
-							Configurations
-						</div>
+						<div className={navHeaderClass}>Configurations</div>
 						{configItems.map((item) => (
 							<NavLink
 								key={item.name}
 								to={item.path}
 								onClick={() => onClose()}
 								className={({ isActive }) =>
-									`flex items-center text-xs tracking-tight gap-3 px-4 py-3 md:py-2 rounded-md transition-all duration-200 ${
-										isActive
-											? "bg-emerald-900/20 text-emerald-400 font-medium"
-											: "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
-									}`
+									`${navLinkBaseClass}
+										${isActive ? "bg-emerald-900/20 text-emerald-400 font-medium" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"}`
 								}
 							>
 								<HugeiconsIcon
@@ -145,10 +154,18 @@ const Sidebar = ({ isOpen = false, onClose = () => {} }: SidebarProps) => {
 					</div>
 				</nav>
 
-				<div className="p-4 border-t border-zinc-800 pb-8 md:pb-4">
+				<div
+					className="p-4 pb-8 md:pb-4
+						border-t border-zinc-800"
+				>
 					<button
 						onClick={handleLogout}
-						className="flex w-full items-center text-xs gap-3 px-4 py-3 md:py-2 text-zinc-400 hover:bg-zinc-800 hover:text-red-400 rounded-md transition-all duration-200 cursor-pointer"
+						className="flex items-center gap-3
+							w-full px-4 py-3 md:py-2
+							rounded-md text-xs
+							text-zinc-400 hover:text-red-400
+							hover:bg-zinc-800
+							transition-all duration-200 cursor-pointer"
 					>
 						<HugeiconsIcon
 							icon={Door01Icon}

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, SquareKanban } from "lucide-react";
 
+import { useAuth } from "../../context/AuthContext";
+
 const Header = () => {
-	const isSignedIn = !!localStorage.getItem("token");
+	const { isAuthenticated: isSignedIn } = useAuth();
 
 	return (
 		<div
@@ -47,9 +49,11 @@ const Header = () => {
 						</Link>
 						<Link
 							to="/register"
-							className="shrink-0 flex items-center gap-1 
-								text-emerald-600 hover:text-emerald-700 text-sm
-								transition-colors 
+							className="shrink-0 flex items-center gap-1 border 
+								text-emerald-600 hover:text-emerald-700 
+								text-sm sm:text-sm px-3 py-1.5 
+								sm:px-4 sm:py-1.5 rounded-full hover:border-emerald-700
+								transition-colors border-emerald-600
 								cursor-pointer whitespace-nowrap tracking-tight"
 						>
 							<span className="sm:hidden">Register</span>

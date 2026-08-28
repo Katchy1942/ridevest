@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import api from "@/lib/axios";
 import { validatePassword } from "@/utils/validators";
+import { useAuth } from "@/context/AuthContext";
 
 const getErrorMessage = (err: any, fallback: string): string => {
 	const data = err?.response?.data;
@@ -17,6 +18,7 @@ const getErrorMessage = (err: any, fallback: string): string => {
 
 export const useCompanyLoginHandler = () => {
 	const navigate = useNavigate();
+	const { login } = useAuth();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
@@ -30,9 +32,7 @@ export const useCompanyLoginHandler = () => {
 			const response = await api.post("/auth/login", { email, password });
 			const { token, company } = response.data;
 
-			localStorage.setItem("token", token);
-			localStorage.setItem("company", JSON.stringify(company));
-			localStorage.setItem("userRole", "company");
+			login(token, "company", company);
 
 			toast.success("Successfully logged in!");
 			setTimeout(() => {
@@ -61,6 +61,7 @@ export const useCompanyLoginHandler = () => {
 
 export const useRiderLoginHandler = () => {
 	const navigate = useNavigate();
+	const { login } = useAuth();
 	const [phone, setPhone] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
@@ -77,9 +78,7 @@ export const useRiderLoginHandler = () => {
 			const response = await api.post("/riders/login", { phone, password });
 			const { token, rider } = response.data;
 
-			localStorage.setItem("token", token);
-			localStorage.setItem("rider", JSON.stringify(rider));
-			localStorage.setItem("userRole", "rider");
+			login(token, "rider", rider);
 
 			toast.success("Successfully logged in!");
 			setTimeout(() => {
@@ -158,23 +157,8 @@ export const useCompanyRegisterHandler = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!formData.companyName.trim())
-			return toast.error("Company name is required");
-		if (!formData.whatsappNumber.trim())
-			return toast.error("WhatsApp number is required");
-		if (!formData.mobileNumber.trim())
-			return toast.error("Mobile number is required");
-		if (!formData.email.trim())
-			return toast.error("Email address is required");
-		if (!formData.state) return toast.error("Please select a state");
-		if (!formData.address.trim())
-			return toast.error("Company address is required");
 		if (formData.availableDays.length === 0)
 			return toast.error("Please select at least one operating day");
-		if (!formData.timeFrom) return toast.error("Opening time is required");
-		if (!formData.timeTo) return toast.error("Closing time is required");
-		if (!formData.averageDeliveryPrice)
-			return toast.error("Average delivery price is required");
 		if (formData.supportedModes.length === 0)
 			return toast.error("Please select at least one transport mode");
 		if (!logo) return toast.error("A company logo is required");
@@ -191,6 +175,8 @@ export const useCompanyRegisterHandler = () => {
 			const submitData = new FormData();
 
 			Object.entries(formData).forEach(([key, value]) => {
+				if (key === "confirmPassword") return;
+
 				if (Array.isArray(value)) {
 					value.forEach((item) => submitData.append(key, item));
 				} else {
@@ -277,30 +263,24 @@ export const useRiderRegisterHandler = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (!formData.companyId)
-			return toast.error("Please select a company to join");
-		if (!formData.fullName.trim())
-			return toast.error("Full name is required");
-		if (!formData.phone.trim())
-			return toast.error("Phone number is required");
-		if (!formData.whatsappNumber.trim())
-			return toast.error("WhatsApp number is required");
-		if (!formData.trackerId.trim())
-			return toast.error("Tracker ID is required");
-		if (!formData.password) return toast.error("Password is required");
+		if (!profilePhoto) return toast.error("A profile photo is required");
+
+		const pwdValidation = validatePassword(formData.password);
+		if (!pwdValidation.isValid) return toast.error(pwdValidation.message);
+
 		if (formData.password !== formData.confirmPassword)
 			return toast.error("Passwords do not match");
-		if (!profilePhoto) return toast.error("A profile photo is required");
 
 		setIsLoading(true);
 		try {
 			const submitData = new FormData();
-			submitData.append("companyId", formData.companyId);
-			submitData.append("fullName", formData.fullName);
-			submitData.append("phone", formData.phone);
-			submitData.append("whatsappNumber", formData.whatsappNumber);
-			submitData.append("trackerId", formData.trackerId);
-			submitData.append("password", formData.password);
+
+			Object.entries(formData).forEach(([key, value]) => {
+				if (key !== "confirmPassword") {
+					submitData.append(key, value as string);
+				}
+			});
+
 			submitData.append("profilePhoto", profilePhoto);
 
 			const response = await api.post("/riders/register", submitData);

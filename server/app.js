@@ -4,6 +4,7 @@ import companyRoutes from "./api/companies/company.routes.js";
 import authRoutes from "./api/auth/auth.routes.js";
 import deliveryRoutes from "./api/deliveries/delivery.routes.js";
 import riderRoutes from "./api/riders/rider.routes.js";
+import { errorHandler } from "./core/middlewares/errorHandler.js";
 
 const app = express();
 
@@ -25,5 +26,7 @@ app.use("/api/riders", riderRoutes);
 app.get("/health", (req, res) => {
 	res.status(200).json({ status: "OK" });
 });
+
+app.use(errorHandler);
 
 export default app;
