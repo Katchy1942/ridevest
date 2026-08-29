@@ -70,7 +70,7 @@ export const ImageUpload = ({ onImageSelect, disabled, variant = 'default' }: Im
 
 	if (variant === 'avatar') {
 		return (
-			<div className="flex items-center gap-4">
+			<div className="flex flex-col items-start gap-4">
 				{input}
 				<div
 					className={`relative w-60 h-60 rounded-xl overflow-hidden shrink-0 border border-dashed transition-all duration-200 ${
@@ -91,7 +91,6 @@ export const ImageUpload = ({ onImageSelect, disabled, variant = 'default' }: Im
 							{/* hover overlay */}
 							<div className={`absolute inset-0 bg-zinc-950/60 flex items-center justify-center transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
 							</div>
-							{/* remove button */}
 							<button
 								type="button"
 								onClick={clearImage}
