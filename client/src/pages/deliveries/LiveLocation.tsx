@@ -60,32 +60,35 @@ const LiveLocation = ({ onClose }: LiveLocationProps) => {
 					<div 
 						className="absolute bottom-3 left-1/2 
 							-translate-x-1/2 z-10 
-							flex items-center gap-2"
+							flex items-center gap-2 max-sm:w-[calc(100%-1.5rem)]
+							max-sm:flex-col"
 					>
 						<button
 							className="p-2 rounded-full
 								bg-zinc-900/80 backdrop-blur-md border border-zinc-700/60
 								text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/80
 								transition-colors cursor-pointer shadow-md
-								[&:hover_svg]:rotate-180 [&_svg]:transition-transform [&_svg]:duration-500"
+								[&:hover_svg]:rotate-180 [&_svg]:transition-transform [&_svg]:duration-500
+								max-sm:self-center"
 						>
 							<RefreshCw size={13} />
 						</button>
 
 						<div
-							className="flex items-center gap-3 px-4 py-2 rounded-full
+							className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 rounded-full
 								bg-zinc-900/80 backdrop-blur-md border border-zinc-700/60
-								shadow-lg whitespace-nowrap"
+								shadow-lg whitespace-nowrap max-sm:w-full max-sm:justify-center
+								max-sm:flex-wrap max-sm:gap-x-1.5 max-sm:py-2.5"
 						>
-							<p className="text-[11px] text-zinc-400 tracking-tight italic">
+							<p className="text-[10px] sm:text-[11px] text-zinc-400 tracking-tight italic leading-tight max-sm:text-center max-sm:whitespace-normal">
 								Rider is approximately{" "}
 								<span className="text-zinc-100 font-semibold not-italic">
 									1.2 km
 								</span>{" "}
 								away from you.
 							</p>
-							<span className="w-px h-3 bg-zinc-600" />
-							<span className="text-[11px] text-zinc-500 font-mono tracking-tight">
+							<span className="hidden sm:inline w-px h-3 bg-zinc-600" />
+							<span className="text-[10px] sm:text-[11px] text-zinc-500 font-mono tracking-tight max-sm:text-center">
 								{TEST_LAT.toFixed(4)}, {TEST_LNG.toFixed(4)}
 							</span>
 						</div>
