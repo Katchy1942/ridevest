@@ -98,7 +98,7 @@ const Register = () => {
 									onChange={handleChange}
 									required
 									disabled={isLoading}
-									className="w-full px-4 py-1.5 text-sm
+									className="w-full px-4 sm:py-1.5 py-3 text-sm
 										bg-zinc-900 border border-zinc-700
 										rounded-md shadow-sm focus:border
 										focus:outline-none focus:border-emerald-500
@@ -118,7 +118,7 @@ const Register = () => {
 									onChange={handleChange}
 									required
 									disabled={isLoading}
-									className="w-full px-4 py-1.5 text-sm
+									className="w-full px-4 sm:py-1.5 py-3 text-sm
 										bg-zinc-900 border border-zinc-700
 										rounded-md shadow-sm focus:border
 										focus:outline-none focus:border-emerald-500
@@ -138,7 +138,7 @@ const Register = () => {
 									onChange={handleChange}
 									required
 									disabled={isLoading}
-									className="w-full px-4 py-1.5 text-sm
+									className="w-full px-4 sm:py-1.5 py-3 text-sm
 										bg-zinc-900 border border-zinc-700
 										rounded-md shadow-sm focus:border
 										focus:outline-none focus:border-emerald-500
@@ -158,7 +158,7 @@ const Register = () => {
 									onChange={handleChange}
 									required
 									disabled={isLoading}
-									className="w-full px-4 py-1.5 text-sm
+									className="w-full px-4 sm:py-1.5 py-3 text-sm
 										bg-zinc-900 border border-zinc-700
 										rounded-md shadow-sm focus:border
 										focus:outline-none focus:border-emerald-500
@@ -181,7 +181,7 @@ const Register = () => {
 									}
 									required
 									disabled={isLoading}
-									className="w-full px-4 py-1.5 text-sm
+									className="w-full px-4 sm:py-1.5 py-3 text-sm
 										bg-zinc-900 border border-zinc-700
 										rounded-md shadow-sm focus:border
 										focus:outline-none focus:border-emerald-500
@@ -203,7 +203,7 @@ const Register = () => {
 									Price Per Delivery
 								</label>
 								<input
-									className="w-full px-4 py-1.5 text-sm
+									className="w-full px-4 sm:py-1.5 py-3 text-sm
 										bg-zinc-900 border border-zinc-700
 										rounded-md shadow-sm focus:border
 										focus:outline-none focus:border-emerald-500
@@ -229,7 +229,7 @@ const Register = () => {
 									required
 									disabled={isLoading}
 									rows={2}
-									className="w-full px-4 py-1.5 text-sm
+									className="w-full px-4 sm:py-1.5 py-3 text-sm
 										bg-zinc-900 border border-zinc-700
 										rounded-md shadow-sm focus:border
 										focus:outline-none focus:border-emerald-500
@@ -248,7 +248,7 @@ const Register = () => {
 											<div
 												key={day}
 												onClick={() => toggleDay(day)}
-												className={`px-3 py-1.5 rounded-full text-xs
+												className={`px-3 sm:py-1.5 py-3 rounded-full text-xs
 													font-medium cursor-pointer transition-colors select-none ${
 														formData.availableDays.includes(day)
 															? "bg-emerald-600/90 text-white shadow-sm"
@@ -270,7 +270,7 @@ const Register = () => {
 												name="timeFrom"
 												value={formData.timeFrom}
 												onChange={handleChange}
-												className="w-full px-3 py-1.5 text-sm
+												className="w-full px-3 sm:py-1.5 py-3 text-sm
 													bg-zinc-800 border border-zinc-700
 													rounded-md shadow-sm focus:border-emerald-500
 													focus:outline-none text-zinc-100 placeholder-zinc-500"
@@ -285,7 +285,7 @@ const Register = () => {
 												name="timeTo"
 												value={formData.timeTo}
 												onChange={handleChange}
-												className="w-full px-3 py-1.5 text-sm
+												className="w-full px-3 sm:py-1.5 py-3 text-sm
 													bg-zinc-800 border border-zinc-700
 													rounded-md shadow-sm focus:border-emerald-500
 													focus:outline-none text-zinc-100 placeholder-zinc-500"
@@ -377,7 +377,7 @@ const Register = () => {
 												value={formData.password}
 												onChange={handleChange}
 												disabled={isLoading}
-												className="w-full px-4 py-1.5 text-sm
+												className="w-full px-4 sm:py-1.5 py-3 text-sm
 													bg-zinc-900 border border-zinc-700
 													rounded-md shadow-sm focus:border
 													focus:outline-none focus:border-emerald-500
@@ -415,7 +415,7 @@ const Register = () => {
 												value={formData.confirmPassword}
 												onChange={handleChange}
 												disabled={isLoading}
-												className="w-full px-4 py-1.5 text-sm
+												className="w-full px-4 sm:py-1.5 py-3 text-sm
 													bg-zinc-900 border border-zinc-700
 													rounded-md shadow-sm focus:border
 													focus:outline-none focus:border-emerald-500
@@ -501,7 +501,7 @@ const Register = () => {
 						<button
 							type="submit"
 							disabled={isLoading}
-							className="w-full py-2 px-4 mt-4
+							className="w-full py-3 px-4 mt-4
 								bg-emerald-600 hover:bg-emerald-500
 								text-black text-sm tracking-tight
 								font-medium rounded-full shadow-sm

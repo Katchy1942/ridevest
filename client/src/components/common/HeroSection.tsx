@@ -29,7 +29,7 @@ const HeroSection = () => {
 
 				<h1
 					className="mb-5 px-2 text-left
-						text-8xl font-extralight text-white/60
+						sm:text-8xl text-4xl font-extralight text-white/60
 						tracking-[-0.07em] leading-[0.9]"
 				>
 					Manage your <span className="text-white/45">entire</span>{" "}

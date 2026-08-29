@@ -110,7 +110,7 @@ const Login = () => {
 										onChange={(e) => setEmail(e.target.value)}
 										required
 										disabled={isLoading}
-										className="w-full px-4 py-2
+										className="w-full px-4 py-3 sm:py-2
 											bg-zinc-900 border border-zinc-700
 											rounded-sm shadow-sm text-sm
 											text-zinc-100 placeholder-zinc-500
@@ -127,8 +127,9 @@ const Login = () => {
 											value={password}
 											onChange={(e) => setPassword(e.target.value)}
 											required
+											placeholder="••••••••"
 											disabled={isLoading}
-											className="w-full pl-4 pr-12 py-2
+											className="w-full pl-4 pr-12 py-3 sm:py-2
 												bg-zinc-900 border border-zinc-700
 												rounded-sm shadow-sm text-sm
 												text-zinc-100 placeholder-zinc-500
@@ -190,7 +191,7 @@ const Login = () => {
 									type="submit"
 									disabled={isLoading}
 									className="flex items-center justify-center w-full mt-2
-										py-2 bg-emerald-700 rounded-full
+										py-3 bg-emerald-700 rounded-full
 										text-sm font-medium text-black
 										shadow-sm tracking-tight
 										hover:bg-emerald-600
